@@ -241,7 +241,50 @@ function initContactForm() {
     });
 }
 
-// Parallax effect for sections (rest of your existing code remains the same)
+// Cursor animation - Orange glow that follows mouse
+function initCursor() {
+    const cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    document.body.appendChild(cursor);
+    
+    // Add cursor styles
+    const cursorStyle = document.createElement('style');
+    cursorStyle.textContent = `
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff8c00;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: all 0.1s ease;
+            background: rgba(255, 140, 0, 0.2);
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+        }
+        
+        .cursor.hover {
+            transform: scale(1.5);
+            background: rgba(255, 140, 0, 0.4);
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
+        }
+    `;
+    document.head.appendChild(cursorStyle);
+    
+    // Update cursor position
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX - 10 + 'px';
+        cursor.style.top = e.clientY - 10 + 'px';
+    });
+    
+    // Cursor hover effects
+    const hoverElements = document.querySelectorAll('a, button, .glass-card');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+}
 function initParallax() {
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;

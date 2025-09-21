@@ -63,28 +63,26 @@ function createMouseGlow() {
     scene.add(mouseGlow);
 }
 
-// Convert screen coordinates to world coordinates
+// Convert screen coordinates to world coordinates (simplified for better mouse tracking)
 function screenToWorld(screenX, screenY) {
-    const vector = new THREE.Vector3();
-    vector.set(
-        (screenX / window.innerWidth) * 2 - 1,
-        -(screenY / window.innerHeight) * 2 + 1,
-        0
-    );
-    vector.unproject(camera);
+    // Calculate the visible area at the glow's z-position
+    const distance = Math.abs(camera.position.z - mouseGlow.position.z);
+    const vFOV = camera.fov * Math.PI / 180;
+    const height = 2 * Math.tan(vFOV / 2) * distance;
+    const width = height * camera.aspect;
     
-    const dir = vector.sub(camera.position).normalize();
-    const distance = -camera.position.z / dir.z;
-    const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+    // Convert screen coordinates to world coordinates
+    const x = ((screenX / window.innerWidth) - 0.5) * width;
+    const y = -((screenY / window.innerHeight) - 0.5) * height;
     
-    return pos;
+    return { x, y };
 }
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
     
-    // Update mouse glow position to follow mouse
+    // Update mouse glow position to follow mouse more accurately
     if (mouseGlow) {
         const worldPos = screenToWorld(mouseX, mouseY);
         mouseGlow.position.x = worldPos.x;
@@ -243,48 +241,6 @@ function initContactForm() {
     });
 }
 
-// Cursor animation (rest of your existing code remains the same)
-function initCursor() {
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor';
-    document.body.appendChild(cursor);
-    
-    // Add cursor styles
-    const cursorStyle = document.createElement('style');
-    cursorStyle.textContent = `
-        .cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #667eea;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: all 0.1s ease;
-        }
-        
-        .cursor.hover {
-            transform: scale(1.5);
-            background: rgba(102, 126, 234, 0.2);
-        }
-    `;
-    document.head.appendChild(cursorStyle);
-    
-    // Update cursor position
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX - 10 + 'px';
-        cursor.style.top = e.clientY - 10 + 'px';
-    });
-    
-    // Cursor hover effects
-    const hoverElements = document.querySelectorAll('a, button, .glass-card');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-}
-
 // Parallax effect for sections (rest of your existing code remains the same)
 function initParallax() {
     window.addEventListener('scroll', () => {
@@ -307,121 +263,3 @@ function initLoader() {
     loader.innerHTML = `
         <div class="loader-content">
             <div class="loader-spinner"></div>
-            <p>Loading Portfolio...</p>
-        </div>
-    `;
-    document.body.appendChild(loader);
-    
-    // Add loader styles
-    const loaderStyle = document.createElement('style');
-    loaderStyle.textContent = `
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--background-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loader-content {
-            text-align: center;
-            color: var(--text-primary);
-        }
-        
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(102, 126, 234, 0.3);
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .loader.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-    `;
-    document.head.appendChild(loaderStyle);
-    
-    // Hide loader after everything is loaded
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            loader.classList.add('fade-out');
-            setTimeout(() => {
-                loader.remove();
-            }, 500);
-        }, 1000);
-    });
-}
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initLoader();
-    initThree();
-    initAnimations();
-    initNavigation();
-    initContactForm();
-    initCursor();
-    initParallax();
-    
-    // Add scroll-triggered animations for stats
-    const statNumbers = document.querySelectorAll('.stat-number');
-    statNumbers.forEach(stat => {
-        const target = stat.textContent;
-        stat.textContent = '0';
-        
-        gsap.to(stat, {
-            textContent: target,
-            duration: 2,
-            ease: 'power2.out',
-            snap: { textContent: 1 },
-            scrollTrigger: {
-                trigger: stat,
-                start: 'top 80%'
-            }
-        });
-    });
-    
-    // Additional interactive effects
-    function addInteractiveEffects() {
-        // Card tilt effect on mouse move
-        const cards = document.querySelectorAll('.glass-card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = (y - centerY) / 10;
-                const rotateY = (centerX - x) / 10;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-            });
-        });
-    }
-    
-    // Initialize interactive effects after DOM load
-    document.addEventListener('DOMContentLoaded', addInteractiveEffects);
-});

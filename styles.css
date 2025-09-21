@@ -85,6 +85,13 @@ body {
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--glass-border);
     transition: all 0.3s ease;
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.navbar.scrolled {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .nav-container {
@@ -283,10 +290,12 @@ body {
     width: 400px;
     height: 500px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     position: relative;
+    text-align: center;
 }
 
 .profile-img {
@@ -299,6 +308,7 @@ body {
         0 20px 40px rgba(0, 0, 0, 0.3),
         0 0 50px rgba(255, 107, 53, 0.2);
     animation: float 6s ease-in-out infinite;
+    margin-bottom: 20px;
 }
 
 @keyframes float {
@@ -698,22 +708,63 @@ section {
     
     .hero-content {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 30px;
         text-align: center;
+        /* Change the order so profile appears first on mobile */
+        display: flex;
+        flex-direction: column;
     }
     
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
+    /* Make profile card appear first on mobile */
     .profile-card {
-        width: 300px;
-        height: 350px;
+        order: -1;
+        width: 280px;
+        height: auto;
+        margin: 0 auto 20px auto;
+        padding: 25px;
     }
     
     .profile-img {
-        width: 250px;
-        height: 250px;
+        width: 200px;
+        height: 200px;
+        margin-bottom: 15px;
+    }
+    
+    /* Add name inside profile card on mobile */
+    .profile-card::after {
+        content: "Arnav Jain";
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Hero text section */
+    .hero-text {
+        order: 1;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: 25px;
+        padding: 0 10px;
     }
     
     .about-content,
@@ -725,6 +776,12 @@ section {
     .hero-buttons {
         flex-direction: column;
         align-items: center;
+        gap: 15px;
+    }
+    
+    .btn {
+        width: 200px;
+        justify-content: center;
     }
     
     .projects-grid {
@@ -751,11 +808,17 @@ section {
     
     .profile-card {
         width: 250px;
-        height: 300px;
+        height: auto;
+        padding: 20px;
     }
     
     .profile-img {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
+    }
+    
+    .profile-card::after {
+        font-size: 1.1rem;
+        bottom: 12px;
     }
 }

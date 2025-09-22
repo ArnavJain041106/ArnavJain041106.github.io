@@ -85,7 +85,7 @@ function initThree() {
     createAdaptiveGeometricShapes();
     createFloatingOrbs();
     createBackgroundEffects();
-    
+    createGlassObjects();
     // Position camera
     camera.position.z = 50;
     
@@ -397,6 +397,43 @@ function createAdaptiveGeometricShapes() {
             });
         }
     });
+}
+function createGlassObjects() {
+    const path = 'textures/cube/skybox/';
+    const format = '.jpg';
+    const urls = [
+        path + 'px' + format, path + 'nx' + format,
+        path + 'py' + format, path + 'ny' + format,
+        path + 'pz' + format, path + 'nz' + format
+    ];
+    const textureCube = new THREE.CubeTextureLoader().load(urls);
+
+    // Add just a few glass spheres
+    for (let i = 0; i < 3; i++) {
+        const geometry = new THREE.SphereGeometry(3, 64, 64);
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 0,
+            roughness: 0,
+            transmission: 1.0,   // transparent
+            thickness: 1.0,      // how much it bends light
+            envMap: textureCube,
+            envMapIntensity: 1.0,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0
+        });
+        
+        const glassSphere = new THREE.Mesh(geometry, glassMaterial);
+        
+        // Spread them out randomly in the background
+        glassSphere.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 80,
+            -30 - Math.random() * 40
+        );
+        
+        scene.add(glassSphere);
+    }
 }
 
 // Enhanced floating orbs

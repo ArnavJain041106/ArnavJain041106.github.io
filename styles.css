@@ -168,7 +168,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 100px 20px 0;
+    padding: 80px 20px 0; /* Reduced top padding to move everything up */
     position: relative;
 }
 
@@ -308,12 +308,16 @@ body {
         0 20px 40px rgba(0, 0, 0, 0.3),
         0 0 50px rgba(255, 107, 53, 0.2);
     animation: float 6s ease-in-out infinite;
-    margin-bottom: 20px;
+    /* Perfect centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50% { transform: translate(-50%, -50%) translateY(-20px); }
 }
 
 /* Scroll Indicator - Completely Removed */
@@ -668,9 +672,13 @@ section {
         left: 0;
     }
     
+    .hero {
+        padding: 60px 20px 0; /* Reduced padding on mobile too */
+    }
+    
     .hero-content {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px; /* Reduced gap to bring elements closer */
         text-align: center;
         /* Change the order so profile appears first on mobile */
         display: flex;
@@ -681,15 +689,19 @@ section {
     .profile-card {
         order: -1;
         width: 280px;
-        height: auto;
-        margin: 0 auto 20px auto;
+        height: 300px; /* Reduced height to move up */
+        margin: 0 auto 15px auto; /* Reduced bottom margin */
         padding: 25px;
     }
     
     .profile-img {
         width: 200px;
         height: 200px;
-        margin-bottom: 15px;
+        /* Keep the same centering for mobile */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
     
     /* Hero text section */
@@ -754,12 +766,17 @@ section {
     
     .profile-card {
         width: 250px;
-        height: auto;
+        height: 280px; /* Reduced height */
         padding: 20px;
     }
     
     .profile-img {
         width: 180px;
         height: 180px;
+        /* Maintain centering on smaller screens */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }

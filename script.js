@@ -489,17 +489,27 @@ function initContactForm() {
     }
 }
 
-// Cursor animation removed - no longer creating custom cursor
-
-// Parallax effect for sections
+// Parallax effect for sections (MODIFIED: reduced intensity, excluded from contact/form)
 function initParallax() {
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
         const parallaxElements = document.querySelectorAll('.parallax');
         
         parallaxElements.forEach(el => {
-            const speed = el.dataset.speed || 0.5;
-            const yPos = -(scrolled * speed);
+            // Skip parallax for contact and form sections
+            const isContactSection = el.closest('#contact') || el.closest('.contact-section');
+            const isFormSection = el.closest('.contact-form') || el.closest('.form-section');
+            
+            if (isContactSection || isFormSection) {
+                // Completely remove parallax transform for contact/form elements
+                el.style.transform = 'translateY(0px)';
+                return;
+            }
+            
+            // Reduced parallax intensity - multiply by 0.4 to reduce by 60%
+            const originalSpeed = parseFloat(el.dataset.speed) || 0.5;
+            const reducedSpeed = originalSpeed * 0.4; // Reduce intensity significantly
+            const yPos = -(scrolled * reducedSpeed);
             el.style.transform = `translateY(${yPos}px)`;
         });
     });
@@ -630,6 +640,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const cards = document.querySelectorAll('.glass-card');
         
         cards.forEach(card => {
+            // Skip interactive effects for contact/form cards
+            const isContactCard = card.closest('#contact') || card.closest('.contact-section');
+            const isFormCard = card.closest('.contact-form') || card.closest('.form-section');
+            
+            if (isContactCard || isFormCard) {
+                return; // Skip interactive effects for contact/form cards
+            }
+            
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -638,10 +656,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
-                const rotateX = (y - centerY) / 10;
-                const rotateY = (centerX - x) / 10;
+                // Reduced tilt effect intensity
+                const rotateX = (y - centerY) / 15; // Increased divisor from 10 to 15
+                const rotateY = (centerX - x) / 15; // Increased divisor from 10 to 15
                 
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`; // Reduced scale from 1.02 to 1.01
             });
             
             card.addEventListener('mouseleave', () => {

@@ -112,18 +112,18 @@ function createMouseGlow() {
     
     // Create multiple gradient layers for depth
     const gradient1 = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
-    gradient1.addColorStop(0, 'rgba(255, 140, 0, 0.4)');
-    gradient1.addColorStop(0.3, 'rgba(255, 100, 0, 0.2)');
-    gradient1.addColorStop(0.7, 'rgba(255, 60, 0, 0.1)');
-    gradient1.addColorStop(1, 'rgba(255, 140, 0, 0)');
+    gradient1.addColorStop(0, 'rgba(255, 140, 0, 0.2)');
+gradient1.addColorStop(0.3, 'rgba(255, 100, 0, 0.1)');
+gradient1.addColorStop(0.7, 'rgba(255, 60, 0, 0.05)');
+gradient1.addColorStop(1, 'rgba(255, 140, 0, 0)');
     
     context.fillStyle = gradient1;
     context.fillRect(0, 0, size, size);
     
     // Add inner glow
     const gradient2 = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/4);
-    gradient2.addColorStop(0, 'rgba(255, 200, 100, 0.3)');
-    gradient2.addColorStop(1, 'rgba(255, 200, 100, 0)');
+    gradient2.addColorStop(0, 'rgba(255, 200, 100, 0.15)');
+gradient2.addColorStop(1, 'rgba(255, 200, 100, 0)');
     
     context.globalCompositeOperation = 'screen';
     context.fillStyle = gradient2;

@@ -1,6 +1,9 @@
-// Three.js WebGL Background with Orange Mouse Glow
+// Three.js WebGL Background with Orange Mouse Glow and Floating Graphics
 let scene, camera, renderer, mouseGlow;
 let mouseX = 0, mouseY = 0;
+let floatingParticles = [];
+let geometricShapes = [];
+let clock;
 
 // Initialize Three.js
 function initThree() {
@@ -18,8 +21,14 @@ function initThree() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     
-    // Create mouse glow effect
+    // Initialize clock for animations
+    clock = new THREE.Clock();
+    
+    // Create effects
     createMouseGlow();
+    createFloatingParticles();
+    createGeometricShapes();
+    createFloatingOrbs();
     
     // Position camera
     camera.position.z = 50;
@@ -61,6 +70,190 @@ function createMouseGlow() {
     scene.add(mouseGlow);
 }
 
+// Create floating particles
+function createFloatingParticles() {
+    const particleCount = 50;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);
+    
+    // Orange color variations
+    const orangeColors = [
+        new THREE.Color(0xff8c00), // Main orange
+        new THREE.Color(0xff6600), // Red orange
+        new THREE.Color(0xffaa00), // Yellow orange
+        new THREE.Color(0xff4400), // Deep orange
+        new THREE.Color(0xffcc00)  // Light orange
+    ];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        
+        // Random positions
+        positions[i3] = (Math.random() - 0.5) * 200;
+        positions[i3 + 1] = (Math.random() - 0.5) * 200;
+        positions[i3 + 2] = (Math.random() - 0.5) * 100;
+        
+        // Random orange colors
+        const color = orangeColors[Math.floor(Math.random() * orangeColors.length)];
+        colors[i3] = color.r;
+        colors[i3 + 1] = color.g;
+        colors[i3 + 2] = color.b;
+        
+        // Random sizes
+        sizes[i] = Math.random() * 3 + 1;
+        
+        // Store additional properties for animation
+        floatingParticles.push({
+            originalY: positions[i3 + 1],
+            speed: Math.random() * 0.02 + 0.005,
+            amplitude: Math.random() * 20 + 10,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    
+    const material = new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        vertexColors: true,
+        uniforms: {
+            time: { value: 0 }
+        },
+        vertexShader: `
+            attribute float size;
+            varying vec3 vColor;
+            uniform float time;
+            
+            void main() {
+                vColor = color;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                gl_PointSize = size * (300.0 / -mvPosition.z);
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `,
+        fragmentShader: `
+            varying vec3 vColor;
+            
+            void main() {
+                float distanceToCenter = distance(gl_PointCoord, vec2(0.5));
+                float alpha = 1.0 - smoothstep(0.0, 0.5, distanceToCenter);
+                alpha *= 0.7;
+                gl_FragColor = vec4(vColor, alpha);
+            }
+        `
+    });
+    
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+    
+    // Store reference for animation
+    particles.userData = { type: 'particles', geometry: geometry, material: material };
+}
+
+// Create geometric shapes
+function createGeometricShapes() {
+    const shapeTypes = [
+        { geometry: new THREE.TetrahedronGeometry(2), count: 8 },
+        { geometry: new THREE.OctahedronGeometry(1.5), count: 6 },
+        { geometry: new THREE.IcosahedronGeometry(1), count: 10 }
+    ];
+    
+    shapeTypes.forEach(shapeType => {
+        for (let i = 0; i < shapeType.count; i++) {
+            const material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color().setHSL(0.08 + Math.random() * 0.05, 0.8, 0.5), // Orange variations
+                transparent: true,
+                opacity: 0.3,
+                wireframe: true
+            });
+            
+            const mesh = new THREE.Mesh(shapeType.geometry, material);
+            
+            // Random position
+            mesh.position.set(
+                (Math.random() - 0.5) * 150,
+                (Math.random() - 0.5) * 150,
+                (Math.random() - 0.5) * 80
+            );
+            
+            // Random rotation
+            mesh.rotation.set(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+            
+            scene.add(mesh);
+            
+            // Store for animation
+            geometricShapes.push({
+                mesh: mesh,
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                },
+                floatSpeed: Math.random() * 0.01 + 0.005,
+                floatAmplitude: Math.random() * 5 + 2,
+                originalY: mesh.position.y,
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+    });
+}
+
+// Create floating orbs
+function createFloatingOrbs() {
+    const orbCount = 12;
+    
+    for (let i = 0; i < orbCount; i++) {
+        const geometry = new THREE.SphereGeometry(
+            Math.random() * 2 + 0.5, // Random size
+            16, 
+            16
+        );
+        
+        const material = new THREE.MeshBasicMaterial({
+            color: new THREE.Color().setHSL(0.08, 0.9, 0.4 + Math.random() * 0.3),
+            transparent: true,
+            opacity: 0.15,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const orb = new THREE.Mesh(geometry, material);
+        
+        // Random position
+        orb.position.set(
+            (Math.random() - 0.5) * 180,
+            (Math.random() - 0.5) * 180,
+            (Math.random() - 0.5) * 60
+        );
+        
+        scene.add(orb);
+        
+        // Store for animation
+        geometricShapes.push({
+            mesh: orb,
+            rotationSpeed: {
+                x: 0,
+                y: (Math.random() - 0.5) * 0.01,
+                z: 0
+            },
+            floatSpeed: Math.random() * 0.008 + 0.003,
+            floatAmplitude: Math.random() * 15 + 5,
+            originalY: orb.position.y,
+            phase: Math.random() * Math.PI * 2,
+            pulseSpeed: Math.random() * 0.02 + 0.01
+        });
+    }
+}
+
 // Convert screen coordinates to world coordinates
 function screenToWorld(screenX, screenY) {
     const distance = Math.abs(camera.position.z - mouseGlow.position.z);
@@ -78,6 +271,8 @@ function screenToWorld(screenX, screenY) {
 function animate() {
     requestAnimationFrame(animate);
     
+    const elapsedTime = clock.getElapsedTime();
+    
     // Update mouse glow position
     if (mouseGlow) {
         const worldPos = screenToWorld(mouseX, mouseY);
@@ -85,9 +280,61 @@ function animate() {
         mouseGlow.position.y = worldPos.y;
         
         // Add subtle pulsing effect
-        const pulse = Math.sin(Date.now() * 0.003) * 0.2 + 1;
+        const pulse = Math.sin(elapsedTime * 3) * 0.2 + 1;
         mouseGlow.scale.set(pulse, pulse, 1);
     }
+    
+    // Animate floating particles
+    const particlesObject = scene.children.find(child => child.userData.type === 'particles');
+    if (particlesObject) {
+        const positions = particlesObject.geometry.attributes.position.array;
+        
+        for (let i = 0; i < floatingParticles.length; i++) {
+            const particle = floatingParticles[i];
+            const i3 = i * 3;
+            
+            // Floating animation
+            positions[i3 + 1] = particle.originalY + Math.sin(elapsedTime * particle.speed + particle.phase) * particle.amplitude;
+            
+            // Gentle horizontal drift
+            positions[i3] += Math.sin(elapsedTime * particle.speed * 0.5) * 0.1;
+        }
+        
+        particlesObject.geometry.attributes.position.needsUpdate = true;
+        particlesObject.material.uniforms.time.value = elapsedTime;
+    }
+    
+    // Animate geometric shapes and orbs
+    geometricShapes.forEach(shape => {
+        const mesh = shape.mesh;
+        
+        // Rotation
+        mesh.rotation.x += shape.rotationSpeed.x;
+        mesh.rotation.y += shape.rotationSpeed.y;
+        mesh.rotation.z += shape.rotationSpeed.z;
+        
+        // Floating
+        mesh.position.y = shape.originalY + Math.sin(elapsedTime * shape.floatSpeed + shape.phase) * shape.floatAmplitude;
+        
+        // Pulse effect for orbs
+        if (shape.pulseSpeed) {
+            const scale = 1 + Math.sin(elapsedTime * shape.pulseSpeed) * 0.2;
+            mesh.scale.set(scale, scale, scale);
+            
+            // Opacity pulsing
+            mesh.material.opacity = 0.15 + Math.sin(elapsedTime * shape.pulseSpeed * 0.7) * 0.1;
+        }
+        
+        // Mouse interaction - shapes move slightly away from mouse
+        if (mouseGlow) {
+            const distance = mesh.position.distanceTo(mouseGlow.position);
+            if (distance < 30) {
+                const repelForce = (30 - distance) / 30;
+                const direction = new THREE.Vector3().subVectors(mesh.position, mouseGlow.position).normalize();
+                mesh.position.add(direction.multiplyScalar(repelForce * 0.5));
+            }
+        }
+    });
     
     renderer.render(scene, camera);
 }
@@ -242,47 +489,7 @@ function initContactForm() {
     }
 }
 
-// Cursor animation - Orange glow that follows mouse
-function initCursor() {
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor';
-    document.body.appendChild(cursor);
-    
-    const cursorStyle = document.createElement('style');
-    cursorStyle.textContent = `
-        .cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ff8c00;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: all 0.1s ease;
-            background: rgba(255, 140, 0, 0.2);
-            box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
-        }
-        
-        .cursor.hover {
-            transform: scale(1.5);
-            background: rgba(255, 140, 0, 0.4);
-            box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
-        }
-    `;
-    document.head.appendChild(cursorStyle);
-    
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX - 10 + 'px';
-        cursor.style.top = e.clientY - 10 + 'px';
-    });
-    
-    const hoverElements = document.querySelectorAll('a, button, .glass-card');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-}
+// Cursor animation removed - no longer creating custom cursor
 
 // Parallax effect for sections
 function initParallax() {
@@ -396,7 +603,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     initNavigation();
     initContactForm();
-    initCursor();
     initParallax();
     
     // Add scroll-triggered animations for stats

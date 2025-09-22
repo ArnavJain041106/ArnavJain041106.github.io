@@ -490,6 +490,7 @@ function initContactForm() {
 }
 
 // Parallax effect for sections (MODIFIED: reduced intensity, excluded from contact/form)
+// Parallax effect for sections (global reduced intensity)
 function initParallax() {
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
@@ -501,19 +502,19 @@ function initParallax() {
             const isFormSection = el.closest('.contact-form') || el.closest('.form-section');
             
             if (isContactSection || isFormSection) {
-                // Completely remove parallax transform for contact/form elements
                 el.style.transform = 'translateY(0px)';
                 return;
             }
             
-            // Reduced parallax intensity - multiply by 0.4 to reduce by 60%
+            // Global reduced parallax intensity (0.3x)
             const originalSpeed = parseFloat(el.dataset.speed) || 0.5;
-            const reducedSpeed = originalSpeed * 0.4; // Reduce intensity significantly
+            const reducedSpeed = originalSpeed * 0.3;
             const yPos = -(scrolled * reducedSpeed);
             el.style.transform = `translateY(${yPos}px)`;
         });
     });
 }
+
 
 // Loading animation
 function initLoader() {

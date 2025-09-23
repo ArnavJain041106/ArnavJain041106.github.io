@@ -29,7 +29,7 @@ function detectDevice() {
                 return false;
             }
         })(),
-        maxParticles: isMobileDevice ? (isTablet ? 200 : 100) : 400,
+        maxParticles: isMobileDevice ? (isTablet ? 50 : 25) : 100,
         maxShapes: isMobileDevice ? (isTablet ? 15 : 8) : 24,
         enableComplexShaders: !isMobileDevice || (isMobileDevice && window.devicePixelRatio >= 2),
         pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 2)
@@ -123,11 +123,15 @@ function initThree() {
         // Position camera
         camera.position.z = 50;
         
-        // Add mouse move listener
+        // Add mouse move listener with initial position
         document.addEventListener('mousemove', (event) => {
             mouseX = event.clientX;
             mouseY = event.clientY;
         });
+        
+        // Set initial mouse position to center
+        mouseX = window.innerWidth / 2;
+        mouseY = window.innerHeight / 2;
         
         // Start render loop
         animate();
@@ -157,27 +161,35 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Reduced mouse glow with minimal orange effect
+// Reduced mouse glow with minimal orange effect - ENHANCED
 function createReducedMouseGlow() {
     try {
-        const glowSize = deviceCapabilities.isMobile ? 8 : 12;
+        const glowSize = deviceCapabilities.isMobile ? 15 : 25; // Increased size
         const glowGeometry = new THREE.PlaneGeometry(glowSize, glowSize);
         
-        // Create a more subtle gradient texture
+        // Create a more visible gradient texture
         const canvas = document.createElement('canvas');
-        const size = deviceCapabilities.isMobile ? 64 : 128;
+        const size = deviceCapabilities.isMobile ? 128 : 256; // Increased texture size
         canvas.width = size;
         canvas.height = size;
         const context = canvas.getContext('2d');
         
-        // Single, more subtle gradient layer
+        // More visible gradient with multiple layers
         const gradient1 = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
-        gradient1.addColorStop(0, 'rgba(255, 140, 0, 0.08)');
-        gradient1.addColorStop(0.4, 'rgba(255, 100, 0, 0.04)');
-        gradient1.addColorStop(0.8, 'rgba(255, 60, 0, 0.02)');
+        gradient1.addColorStop(0, 'rgba(255, 140, 0, 0.6)'); // Much more visible
+        gradient1.addColorStop(0.3, 'rgba(255, 100, 0, 0.4)');
+        gradient1.addColorStop(0.6, 'rgba(255, 60, 0, 0.2)');
         gradient1.addColorStop(1, 'rgba(255, 140, 0, 0)');
         
         context.fillStyle = gradient1;
+        context.fillRect(0, 0, size, size);
+        
+        // Add inner glow
+        const gradient2 = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/4);
+        gradient2.addColorStop(0, 'rgba(255, 200, 100, 0.8)');
+        gradient2.addColorStop(1, 'rgba(255, 200, 100, 0)');
+        
+        context.fillStyle = gradient2;
         context.fillRect(0, 0, size, size);
         
         const texture = new THREE.CanvasTexture(canvas);
@@ -189,12 +201,18 @@ function createReducedMouseGlow() {
             map: texture,
             transparent: true,
             blending: THREE.AdditiveBlending,
-            depthWrite: false
+            depthWrite: false,
+            opacity: 1.0 // Full opacity
         });
         
         mouseGlow = new THREE.Mesh(glowGeometry, glowMaterial);
-        mouseGlow.position.z = -10;
+        mouseGlow.position.z = -5; // Closer to camera
         scene.add(mouseGlow);
+        
+        // Set initial position to center of screen
+        const initialWorldPos = screenToWorld(window.innerWidth / 2, window.innerHeight / 2);
+        mouseGlow.position.x = initialWorldPos.x;
+        mouseGlow.position.y = initialWorldPos.y;
         
         // Add touch support for mobile
         if (deviceCapabilities.isMobile) {
@@ -214,7 +232,7 @@ function createReducedMouseGlow() {
             }, { passive: true });
         }
         
-        console.log('Mouse glow created successfully');
+        console.log('Mouse glow created successfully with enhanced visibility');
     } catch (error) {
         console.error('Error creating mouse glow:', error);
     }
@@ -267,7 +285,7 @@ function createEnhancedParticleSystem() {
             // Variable sizes
             sizes[i] = Math.random() * (deviceCapabilities.isMobile ? 2 : 4) + 1;
             
-            // Store additional properties
+            // Store additional properties with SLOWER motion
             floatingParticles.push({
                 originalPos: {
                     x: positions[i3],
@@ -275,13 +293,13 @@ function createEnhancedParticleSystem() {
                     z: positions[i3 + 2]
                 },
                 velocity: {
-                    x: (Math.random() - 0.5) * 0.02,
-                    y: Math.random() * 0.01 + 0.005,
-                    z: (Math.random() - 0.5) * 0.02
+                    x: (Math.random() - 0.5) * 0.005, // Reduced from 0.02
+                    y: Math.random() * 0.002 + 0.001, // Reduced from 0.01 + 0.005
+                    z: (Math.random() - 0.5) * 0.005  // Reduced from 0.02
                 },
                 phase: Math.random() * Math.PI * 2,
-                amplitude: Math.random() * 15 + 5,
-                twinkleSpeed: Math.random() * 0.02 + 0.01
+                amplitude: Math.random() * 8 + 3, // Reduced from 15 + 5
+                twinkleSpeed: Math.random() * 0.008 + 0.003 // Reduced from 0.02 + 0.01
             });
         }
         
@@ -561,16 +579,18 @@ function animate() {
     try {
         const elapsedTime = clock ? clock.getElapsedTime() : Date.now() * 0.001;
         
-        // Update mouse glow with smooth interpolation
+        // Update mouse glow with smooth interpolation and MORE VISIBLE effect
         if (mouseGlow) {
             const worldPos = screenToWorld(mouseX, mouseY);
             
-            mouseGlow.position.x += (worldPos.x - mouseGlow.position.x) * 0.1;
-            mouseGlow.position.y += (worldPos.y - mouseGlow.position.y) * 0.1;
+            // Faster, more responsive movement
+            mouseGlow.position.x += (worldPos.x - mouseGlow.position.x) * 0.15; // Increased from 0.1
+            mouseGlow.position.y += (worldPos.y - mouseGlow.position.y) * 0.15; // Increased from 0.1
             
-            const pulse = Math.sin(elapsedTime * 1.5) * 0.08 + Math.cos(elapsedTime * 2) * 0.03 + 1;
+            // More noticeable pulsing effect
+            const pulse = Math.sin(elapsedTime * 2) * 0.2 + Math.cos(elapsedTime * 3) * 0.1 + 1.2; // Increased values
             mouseGlow.scale.set(pulse, pulse, 1);
-            mouseGlow.rotation.z += 0.005;
+            mouseGlow.rotation.z += 0.01; // Slightly faster rotation
         }
         
         // Enhanced particle animation

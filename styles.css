@@ -545,6 +545,19 @@ section { padding: 100px 0; position: relative; }
 
   .section-title { font-size:2.5rem; }
 }
+/* ==============================================================
+   8. FIXED FALLBACK BACKGROUND (no annoying glow)
+   ============================================================== */
+#fallback-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--background-dark); /* clean dark background */
+  z-index: -1; /* stays behind all content */
+  pointer-events: none; /* make sure it never blocks clicks */
+}
 
 /* --------------------------------------------------------------
    Small phones – tiny tweaks

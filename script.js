@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Hero section animation
         gsap.from('.merged-hero-card', {
-            duration: 1,
+            duration: 0.6,
             y: 100,
             opacity: 0,
             ease: 'power3.out'
@@ -439,10 +439,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     end: 'bottom 20%',
                     toggleActions: 'play none none reverse'
                 },
-                duration: 0.8,
+                duration: 0.4,
                 y: 50,
                 opacity: 0,
-                delay: index * 0.1,
+                delay: index * 0.05,
                 ease: 'power2.out'
             });
         });

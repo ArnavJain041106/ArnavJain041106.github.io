@@ -13,9 +13,9 @@ function detectDevice() {
     const userAgent = navigator.userAgent;
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
     const isTablet = /iPad|Tablet|(android|bb\d+|meego).+mobile/i.test(userAgent);
-    
+
     isMobile = isMobileDevice;
-    
+
     deviceCapabilities = {
         isMobile: isMobileDevice,
         isTablet: isTablet,
@@ -32,17 +32,19 @@ function detectDevice() {
         maxShapes: isMobileDevice ? (isTablet ? 15 : 8) : 24,
         pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 2)
     };
-    
+
     return deviceCapabilities;
 }
 
 // Navigation scroll effect
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
+    if (navbar) {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
     }
 });
 
@@ -107,10 +109,11 @@ const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
-        
+
+        // Simulate form submission
         try {
             console.log('Form submitted:', data);
             alert('Message sent successfully!');
@@ -128,7 +131,7 @@ function initFallbackBackground() {
     if (canvas) {
         canvas.style.display = 'none';
     }
-    
+
     const fallbackDiv = document.createElement('div');
     fallbackDiv.style.position = 'fixed';
     fallbackDiv.style.top = '0';
@@ -156,32 +159,44 @@ function screenToWorld(screenX, screenY) {
     return pos;
 }
 
-// Enhanced mouse glow effect
+// Enhanced mouse glow effect - MODIFIED
 function createEnhancedMouseGlow() {
     try {
-        const glowSize = deviceCapabilities.isMobile ? 20 : 30;
+        // Check if we're on mobile - if so, don't create glow
+        if (deviceCapabilities.isMobile) {
+            return null; // Don't create glow for mobile devices
+        }
+
+        // Calculate glow size - approximately 0.3 inches
+        // Assuming 96 DPI screen, 0.3 inches = ~29 pixels
+        const glowSize = 29; // Fixed size for better control
         const glowGeometry = new THREE.PlaneGeometry(glowSize, glowSize);
-        
+
         const canvas = document.createElement('canvas');
-        const size = deviceCapabilities.isMobile ? 128 : 256;
+        const size = 128; // Keep canvas size consistent for quality
         canvas.width = size;
         canvas.height = size;
         const context = canvas.getContext('2d');
-        
+
+        if (!context) {
+            console.error('Could not get 2D context for mouse glow');
+            return null;
+        }
+
         const gradient = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
         gradient.addColorStop(0, 'rgba(255, 140, 0, 0.8)');
         gradient.addColorStop(0.3, 'rgba(255, 100, 0, 0.5)');
         gradient.addColorStop(0.6, 'rgba(255, 60, 0, 0.2)');
         gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
-        
+
         context.fillStyle = gradient;
         context.fillRect(0, 0, size, size);
-        
+
         const texture = new THREE.CanvasTexture(canvas);
         texture.generateMipmaps = false;
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
-        
+
         const glowMaterial = new THREE.MeshBasicMaterial({
             map: texture,
             transparent: true,
@@ -189,17 +204,20 @@ function createEnhancedMouseGlow() {
             depthWrite: false,
             opacity: 1.0
         });
-        
+
         mouseGlow = new THREE.Mesh(glowGeometry, glowMaterial);
         mouseGlow.position.z = -5;
         scene.add(mouseGlow);
-        
+
         const initialWorldPos = screenToWorld(window.innerWidth / 2, window.innerHeight / 2);
         mouseGlow.position.x = initialWorldPos.x;
         mouseGlow.position.y = initialWorldPos.y;
-        
+
+        return mouseGlow;
+
     } catch (error) {
         console.error('Error creating mouse glow:', error);
+        return null;
     }
 }
 
@@ -211,7 +229,7 @@ function createEnhancedParticleSystem() {
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
-        
+
         const colorPalette = [
             new THREE.Color(0xff8c00), // Main orange
             new THREE.Color(0xff6600), // Red orange
@@ -219,25 +237,25 @@ function createEnhancedParticleSystem() {
             new THREE.Color(0xff4400), // Deep orange
             new THREE.Color(0xffcc00), // Light orange
         ];
-        
+
         for (let i = 0; i < particleCount; i++) {
             const i3 = i * 3;
             const angle = (i / particleCount) * Math.PI * 2;
             const radius = Math.random() * 100 + 20;
             const height = (Math.random() - 0.5) * 120;
-            
+
             positions[i3] = Math.cos(angle) * radius + (Math.random() - 0.5) * 50;
             positions[i3 + 1] = height;
             positions[i3 + 2] = Math.sin(angle) * radius + (Math.random() - 0.5) * 60;
-            
+
             const colorIndex = Math.floor(Math.random() * colorPalette.length);
             const baseColor = colorPalette[colorIndex];
             colors[i3] = baseColor.r;
             colors[i3 + 1] = baseColor.g;
             colors[i3 + 2] = baseColor.b;
-            
+
             sizes[i] = Math.random() * (deviceCapabilities.isMobile ? 2 : 4) + 1;
-            
+
             floatingParticles.push({
                 originalPos: {
                     x: positions[i3],
@@ -253,11 +271,11 @@ function createEnhancedParticleSystem() {
                 amplitude: Math.random() * 10 + 5
             });
         }
-        
+
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-        
+
         const material = new THREE.PointsMaterial({
             size: 3,
             vertexColors: true,
@@ -266,10 +284,10 @@ function createEnhancedParticleSystem() {
             blending: THREE.AdditiveBlending,
             sizeAttenuation: true
         });
-        
+
         particleSystem = new THREE.Points(geometry, material);
         scene.add(particleSystem);
-        
+
     } catch (error) {
         console.error('Error creating particle system:', error);
     }
@@ -279,69 +297,65 @@ function createEnhancedParticleSystem() {
 function initThree() {
     try {
         detectDevice();
-        
+
         if (!deviceCapabilities.supportsWebGL) {
             initFallbackBackground();
             return;
         }
-        
+
         const canvas = document.getElementById('bg-canvas');
         if (!canvas) {
             console.error('Canvas element not found');
             return;
         }
-        
+
         if (typeof THREE === 'undefined') {
             console.error('Three.js library not loaded');
             initFallbackBackground();
             return;
         }
-        
+
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
-        
+
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        
+
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: false,
             antialias: !deviceCapabilities.isMobile,
             powerPreference: deviceCapabilities.isMobile ? 'low-power' : 'high-performance'
         });
-        
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(deviceCapabilities.pixelRatio);
-        
+
         clock = new THREE.Clock();
-        
-        createEnhancedMouseGlow();
-        createEnhancedParticleSystem();
-        
-        camera.position.z = 50;
-        
-        // Mouse tracking
-        document.addEventListener('mousemove', (event) => {
-            mouseX = event.clientX;
-            mouseY = event.clientY;
-        });
-        
-        // Touch support
-        if (deviceCapabilities.isMobile) {
-            document.addEventListener('touchmove', (event) => {
-                if (event.touches.length > 0) {
-                    mouseX = event.touches[0].clientX;
-                    mouseY = event.touches[0].clientY;
-                }
-            }, { passive: true });
+
+        // Only create mouse glow if not on mobile
+        if (!deviceCapabilities.isMobile) {
+            createEnhancedMouseGlow();
         }
-        
+
+        createEnhancedParticleSystem();
+
+        camera.position.z = 50;
+
+        // Mouse tracking - only for non-mobile
+        if (!deviceCapabilities.isMobile) {
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+        }
+
         mouseX = window.innerWidth / 2;
         mouseY = window.innerHeight / 2;
-        
+
         animate();
-        
+
         window.addEventListener('resize', onWindowResize, false);
-        
+
     } catch (error) {
         console.error('Error initializing Three.js:', error);
         initFallbackBackground();
@@ -351,7 +365,7 @@ function initThree() {
 // Window resize handler
 function onWindowResize() {
     if (!camera || !renderer) return;
-    
+
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -360,48 +374,48 @@ function onWindowResize() {
 // Enhanced animation loop
 function animate() {
     requestAnimationFrame(animate);
-    
+
     if (!clock || !scene || !camera || !renderer) return;
-    
+
     const elapsedTime = clock.getElapsedTime();
-    
-    // Update mouse glow position
+
+    // Update mouse glow position - only if it exists (non-mobile)
     if (mouseGlow) {
         const targetPos = screenToWorld(mouseX, mouseY);
         mouseGlow.position.x += (targetPos.x - mouseGlow.position.x) * 0.1;
         mouseGlow.position.y += (targetPos.y - mouseGlow.position.y) * 0.1;
     }
-    
+
     // Update particles
     if (particleSystem && floatingParticles.length > 0) {
         const positions = particleSystem.geometry.attributes.position.array;
-        
+
         for (let i = 0; i < floatingParticles.length; i++) {
             const particle = floatingParticles[i];
             const i3 = i * 3;
-            
+
             // Slow floating motion
             particle.originalPos.x += particle.velocity.x;
             particle.originalPos.y += particle.velocity.y;
             particle.originalPos.z += particle.velocity.z;
-            
+
             // Add wave motion
             const wave = Math.sin(elapsedTime * 0.5 + particle.phase) * particle.amplitude;
-            
+
             positions[i3] = particle.originalPos.x + wave * 0.1;
             positions[i3 + 1] = particle.originalPos.y + wave * 0.2;
             positions[i3 + 2] = particle.originalPos.z + wave * 0.1;
-            
+
             // Boundary wrapping
             if (positions[i3] > 150) particle.originalPos.x = -150;
             if (positions[i3] < -150) particle.originalPos.x = 150;
             if (positions[i3 + 1] > 100) particle.originalPos.y = -100;
             if (positions[i3 + 1] < -100) particle.originalPos.y = 100;
         }
-        
+
         particleSystem.geometry.attributes.position.needsUpdate = true;
     }
-    
+
     renderer.render(scene, camera);
 }
 
@@ -409,11 +423,11 @@ function animate() {
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Three.js background
     initThree();
-    
+
     // GSAP Animations (if GSAP is loaded)
     if (typeof gsap !== 'undefined' && gsap.registerPlugin) {
         gsap.registerPlugin(ScrollTrigger);
-        
+
         // Hero section animation
         gsap.from('.merged-hero-card', {
             duration: 1,
@@ -421,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opacity: 0,
             ease: 'power3.out'
         });
-        
+
         // Section animations
         gsap.utils.toArray('.glass-card').forEach((card, index) => {
             gsap.from(card, {

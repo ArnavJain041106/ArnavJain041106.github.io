@@ -157,7 +157,7 @@ function initFallbackBackground() {
     fallbackDiv.style.left = '0';
     fallbackDiv.style.width = '100%';
     fallbackDiv.style.height = '100%';
-    fallbackDiv.style.background = 'radial-gradient(circle, rgba(255,140,0,0.1) 0%, rgba(0,0,0,1) 70%)';
+    fallbackDiv.style.background = '#000000';
     fallbackDiv.style.zIndex = '-1';
     fallbackDiv.style.pointerEvents = 'none';
     document.body.appendChild(fallbackDiv);

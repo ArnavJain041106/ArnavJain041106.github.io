@@ -1,4 +1,7 @@
-// Enhanced Portfolio Script with Advanced Three.js Background
+// -----------------------------------------------------------
+// Enhanced Portfolio Script – WebGL disabled, 0.3‑inch glow
+// -----------------------------------------------------------
+
 let scene, camera, renderer, mouseGlow;
 let mouseX = 0, mouseY = 0;
 let floatingParticles = [];
@@ -8,7 +11,9 @@ let isMobile = false;
 let deviceCapabilities = {};
 let particleSystem = null;
 
-// Device detection and capability assessment
+// -----------------------------------------------------------
+// Device detection and capability assessment (unchanged)
+// -----------------------------------------------------------
 function detectDevice() {
     const userAgent = navigator.userAgent;
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
@@ -36,7 +41,9 @@ function detectDevice() {
     return deviceCapabilities;
 }
 
+// -----------------------------------------------------------
 // Navigation scroll effect
+// -----------------------------------------------------------
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
@@ -48,7 +55,9 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// -----------------------------------------------------------
 // Mobile menu toggle
+// -----------------------------------------------------------
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
@@ -58,7 +67,9 @@ if (hamburger && navMenu) {
     });
 }
 
+// -----------------------------------------------------------
 // Close mobile menu when link is clicked
+// -----------------------------------------------------------
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
         if (navMenu) {
@@ -67,7 +78,9 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
+// -----------------------------------------------------------
 // Smooth scrolling for navigation links
+// -----------------------------------------------------------
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -81,7 +94,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// -----------------------------------------------------------
 // Animate skill progress bars when in view
+// -----------------------------------------------------------
 const observerOptions = {
     threshold: 0.5,
     rootMargin: '0px 0px -50px 0px'
@@ -104,7 +119,9 @@ if (skillsSection) {
     progressObserver.observe(skillsSection);
 }
 
+// -----------------------------------------------------------
 // Contact form handling
+// -----------------------------------------------------------
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
@@ -125,7 +142,9 @@ if (contactForm) {
     });
 }
 
-// Fallback for non-WebGL browsers
+// -----------------------------------------------------------
+// Fallback for non‑WebGL browsers (used for every device now)
+// -----------------------------------------------------------
 function initFallbackBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
@@ -144,7 +163,9 @@ function initFallbackBackground() {
     document.body.appendChild(fallbackDiv);
 }
 
-// Screen to world coordinate conversion
+// -----------------------------------------------------------
+// Screen‑to‑world conversion (kept for completeness – not used)
+// -----------------------------------------------------------
 function screenToWorld(screenX, screenY) {
     const vector = new THREE.Vector3();
     vector.set(
@@ -159,38 +180,47 @@ function screenToWorld(screenX, screenY) {
     return pos;
 }
 
-// Enhanced mouse glow effect - MODIFIED
+// -----------------------------------------------------------
+// Enhanced mouse glow – now exactly 0.3 inches
+// -----------------------------------------------------------
 function createEnhancedMouseGlow() {
     try {
-        // Check if we're on mobile - if so, don't create glow
+        // Skip on mobile – original behaviour
         if (deviceCapabilities.isMobile) {
-            return null; // Don't create glow for mobile devices
+            return null;
         }
 
-        // Calculate glow size - approximately 0.3 inches
-        // Assuming 96 DPI screen, 0.3 inches = ~29 pixels
-        const glowSize = 29; // Fixed size for better control
-        const glowGeometry = new THREE.PlaneGeometry(glowSize, glowSize);
+        // ---------- 0.3 in → pixels (respecting device pixel‑ratio) ----------
+        const DPI = 96;                    // CSS reference DPI
+        const INCHES = 0.3;
+        const glowSizePixels = Math.round(INCHES * DPI * window.devicePixelRatio); // ≈29 px for 1× screens
 
+        // Plane geometry uses world units; we feed the pixel size directly.
+        const glowGeometry = new THREE.PlaneGeometry(glowSizePixels, glowSizePixels);
+
+        // ---------- texture generation ----------
         const canvas = document.createElement('canvas');
-        const size = 128; // Keep canvas size consistent for quality
+        const size = 128;                  // texture resolution – unchanged
         canvas.width = size;
         canvas.height = size;
-        const context = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
 
-        if (!context) {
+        if (!ctx) {
             console.error('Could not get 2D context for mouse glow');
             return null;
         }
 
-        const gradient = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
-        gradient.addColorStop(0, 'rgba(255, 140, 0, 0.8)');
-        gradient.addColorStop(0.3, 'rgba(255, 100, 0, 0.5)');
-        gradient.addColorStop(0.6, 'rgba(255, 60, 0, 0.2)');
-        gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+        const gradient = ctx.createRadialGradient(
+            size / 2, size / 2, 0,
+            size / 2, size / 2, size / 2
+        );
+        gradient.addColorStop(0,   'rgba(255,140,0,0.8)');
+        gradient.addColorStop(0.3, 'rgba(255,100,0,0.5)');
+        gradient.addColorStop(0.6, 'rgba(255,60,0,0.2)');
+        gradient.addColorStop(1,   'rgba(255,140,0,0)');
 
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, size, size);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.generateMipmaps = false;
@@ -209,19 +239,20 @@ function createEnhancedMouseGlow() {
         mouseGlow.position.z = -5;
         scene.add(mouseGlow);
 
-        const initialWorldPos = screenToWorld(window.innerWidth / 2, window.innerHeight / 2);
-        mouseGlow.position.x = initialWorldPos.x;
-        mouseGlow.position.y = initialWorldPos.y;
+        // Initialise at screen centre
+        const centre = screenToWorld(window.innerWidth / 2, window.innerHeight / 2);
+        mouseGlow.position.set(centre.x, centre.y, -5);
 
         return mouseGlow;
-
     } catch (error) {
         console.error('Error creating mouse glow:', error);
         return null;
     }
 }
 
-// Enhanced particle system
+// -----------------------------------------------------------
+// createEnhancedParticleSystem (kept – never called now)
+// -----------------------------------------------------------
 function createEnhancedParticleSystem() {
     try {
         const particleCount = deviceCapabilities.maxParticles;
@@ -231,11 +262,11 @@ function createEnhancedParticleSystem() {
         const sizes = new Float32Array(particleCount);
 
         const colorPalette = [
-            new THREE.Color(0xff8c00), // Main orange
-            new THREE.Color(0xff6600), // Red orange
-            new THREE.Color(0xffaa00), // Yellow orange
-            new THREE.Color(0xff4400), // Deep orange
-            new THREE.Color(0xffcc00), // Light orange
+            new THREE.Color(0xff8c00),
+            new THREE.Color(0xff6600),
+            new THREE.Color(0xffaa00),
+            new THREE.Color(0xff4400),
+            new THREE.Color(0xffcc00)
         ];
 
         for (let i = 0; i < particleCount; i++) {
@@ -287,82 +318,44 @@ function createEnhancedParticleSystem() {
 
         particleSystem = new THREE.Points(geometry, material);
         scene.add(particleSystem);
-
     } catch (error) {
         console.error('Error creating particle system:', error);
     }
 }
 
-// Initialize Three.js with enhanced features
+// -----------------------------------------------------------
+// initThree – WebGL disabled, always use fallback background
+// -----------------------------------------------------------
 function initThree() {
     try {
+        // Device detection (kept for UI tweaks)
         detectDevice();
 
-        if (!deviceCapabilities.supportsWebGL) {
-            initFallbackBackground();
-            return;
-        }
+        // ALWAYS use the static fallback background – no WebGL at all
+        initFallbackBackground();
 
+        // Hide the canvas element if it exists
         const canvas = document.getElementById('bg-canvas');
-        if (!canvas) {
-            console.error('Canvas element not found');
-            return;
-        }
+        if (canvas) canvas.style.display = 'none';
 
-        if (typeof THREE === 'undefined') {
-            console.error('Three.js library not loaded');
-            initFallbackBackground();
-            return;
-        }
+        // Reset all Three.js related globals so later code does not accidentally use them
+        scene = null;
+        camera = null;
+        renderer = null;
+        mouseGlow = null;
+        particleSystem = null;
+        floatingParticles = [];
 
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);
-
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-        renderer = new THREE.WebGLRenderer({
-            canvas: canvas,
-            alpha: false,
-            antialias: !deviceCapabilities.isMobile,
-            powerPreference: deviceCapabilities.isMobile ? 'low-power' : 'high-performance'
-        });
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(deviceCapabilities.pixelRatio);
-
-        clock = new THREE.Clock();
-
-        // Only create mouse glow if not on mobile
-        if (!deviceCapabilities.isMobile) {
-            createEnhancedMouseGlow();
-        }
-
-        createEnhancedParticleSystem();
-
-        camera.position.z = 50;
-
-        // Mouse tracking - only for non-mobile
-        if (!deviceCapabilities.isMobile) {
-            document.addEventListener('mousemove', (event) => {
-                mouseX = event.clientX;
-                mouseY = event.clientY;
-            });
-        }
-
-        mouseX = window.innerWidth / 2;
-        mouseY = window.innerHeight / 2;
-
-        animate();
-
-        window.addEventListener('resize', onWindowResize, false);
-
+        // No animation loop, no resize handler needed – everything is static now
     } catch (error) {
-        console.error('Error initializing Three.js:', error);
+        console.error('Unexpected error while disabling WebGL:', error);
         initFallbackBackground();
     }
 }
 
-// Window resize handler
+// -----------------------------------------------------------
+// Window resize handler (safe – exits early if no camera/renderer)
+// -----------------------------------------------------------
 function onWindowResize() {
     if (!camera || !renderer) return;
 
@@ -371,7 +364,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Enhanced animation loop
+// -----------------------------------------------------------
+// Animation loop (will simply not run because renderer is null)
+// -----------------------------------------------------------
 function animate() {
     requestAnimationFrame(animate);
 
@@ -379,14 +374,14 @@ function animate() {
 
     const elapsedTime = clock.getElapsedTime();
 
-    // Update mouse glow position - only if it exists (non-mobile)
+    // Mouse glow update (only when it exists)
     if (mouseGlow) {
         const targetPos = screenToWorld(mouseX, mouseY);
         mouseGlow.position.x += (targetPos.x - mouseGlow.position.x) * 0.1;
         mouseGlow.position.y += (targetPos.y - mouseGlow.position.y) * 0.1;
     }
 
-    // Update particles
+    // Particle system update
     if (particleSystem && floatingParticles.length > 0) {
         const positions = particleSystem.geometry.attributes.position.array;
 
@@ -394,19 +389,16 @@ function animate() {
             const particle = floatingParticles[i];
             const i3 = i * 3;
 
-            // Slow floating motion
             particle.originalPos.x += particle.velocity.x;
             particle.originalPos.y += particle.velocity.y;
             particle.originalPos.z += particle.velocity.z;
 
-            // Add wave motion
             const wave = Math.sin(elapsedTime * 0.5 + particle.phase) * particle.amplitude;
 
             positions[i3] = particle.originalPos.x + wave * 0.1;
             positions[i3 + 1] = particle.originalPos.y + wave * 0.2;
             positions[i3 + 2] = particle.originalPos.z + wave * 0.1;
 
-            // Boundary wrapping
             if (positions[i3] > 150) particle.originalPos.x = -150;
             if (positions[i3] < -150) particle.originalPos.x = 150;
             if (positions[i3 + 1] > 100) particle.originalPos.y = -100;
@@ -419,9 +411,11 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Initialize everything when DOM is ready
+// -----------------------------------------------------------
+// DOMContentLoaded – start everything
+// -----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Three.js background
+    // Initialise background (WebGL disabled)
     initThree();
 
     // GSAP Animations (if GSAP is loaded)

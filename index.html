@@ -9,15 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Supabase client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabase = window.supabase.createClient(
-    "https://kgdaexxubboaytdmhbrw.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnZGFleHh1YmJvYXl0ZG1oYnJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MjAyMDEsImV4cCI6MjA3NDE5NjIwMX0.JvE0hVMTkVy-5jHjaXC05NOxQtvxMv7zQMtanmw66cw"
-  );
-</script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabase = window.supabase.createClient(
+            "https://kgdaexxubboaytdmhbrw.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnZGFleHh1YmJvYXl0ZG1oYnJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MjAyMDEsImV4cCI6MjA3NDE5NjIwMX0.JvE0hVMTkVy-5jHjaXC05NOxQtvxMv7zQMtanmw66cw"
+        );
+    </script>
 </head>
 <body>
     <!-- 3D Background Canvas -->
@@ -48,24 +46,27 @@
     <section id="home" class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">
-                    <span class="text-gradient">Hello, I'm</span><br>
-                    <span class="name-highlight">Arnav Jain</span>
-                </h1>
-                <p class="hero-subtitle">Full-Stack Developer & Web Designer</p>
-                <p class="hero-description">
-                    Passionate about creating beautiful, functional websites and applications
-                    that provide exceptional user experiences.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary">
-                        <i class="fas fa-code"></i>
-                        View My Work
-                    </a>
-                    <a href="#contact" class="btn btn-secondary">
-                        <i class="fas fa-envelope"></i>
-                        Get In Touch
-                    </a>
+                <!-- Enhanced glassmorphism container for hero text -->
+                <div class="glass-card hero-text-card">
+                    <h1 class="hero-title">
+                        <span class="text-gradient">Hello, I'm</span><br>
+                        <span class="name-highlight">Arnav Jain</span>
+                    </h1>
+                    <p class="hero-subtitle">Full-Stack Developer & Web Designer</p>
+                    <p class="hero-description">
+                        Passionate about creating beautiful, functional websites and applications
+                        that provide exceptional user experiences.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary">
+                            <i class="fas fa-code"></i>
+                            View My Work
+                        </a>
+                        <a href="#contact" class="btn btn-secondary">
+                            <i class="fas fa-envelope"></i>
+                            Get In Touch
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="hero-image">
@@ -84,21 +85,25 @@
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">About Me</h2>
-                <p class="section-subtitle">Get to know me better</p>
+            <!-- Enhanced section header with glassmorphism -->
+            <div class="glass-card section-header-card">
+                <div class="section-header">
+                    <h2 class="section-title">About Me</h2>
+                    <p class="section-subtitle">Get to know me better</p>
+                </div>
             </div>
+            
             <div class="about-content">
                 <div class="about-text">
                     <div class="glass-card">
                         <h3>My Journey</h3>
                         <p>
-                            I'm currently learning full-stack development with a focus on creating 
-                            modern, responsive websites and applications. My journey started with 
+                            I'm currently learning full-stack development with a focus on creating
+                            modern, responsive websites and applications. My journey started with
                             basic HTML and has evolved into mastering modern web technologies.
                         </p>
                         <p>
-                            I'm passionate about clean code, beautiful design, and creating 
+                            I'm passionate about clean code, beautiful design, and creating
                             user-centered solutions that make a difference.
                         </p>
                         <div class="about-stats">
@@ -111,7 +116,7 @@
                                 <span class="stat-label">Years Learning</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-number">&infin;</span>
+                                <span class="stat-number">∞</span>
                                 <span class="stat-label">Passion for Code</span>
                             </div>
                         </div>
@@ -152,10 +157,14 @@
     <!-- Skills Section -->
     <section id="skills" class="skills">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Skills & Technologies</h2>
-                <p class="section-subtitle">Technologies I work with</p>
+            <!-- Enhanced section header with glassmorphism -->
+            <div class="glass-card section-header-card">
+                <div class="section-header">
+                    <h2 class="section-title">Skills & Technologies</h2>
+                    <p class="section-subtitle">Technologies I work with</p>
+                </div>
             </div>
+            
             <div class="skills-grid">
                 <div class="glass-card skill-card">
                     <div class="skill-icon">
@@ -218,10 +227,14 @@
     <!-- Projects Section -->
     <section id="projects" class="projects">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">My Projects</h2>
-                <p class="section-subtitle">Some of my recent work</p>
+            <!-- Enhanced section header with glassmorphism -->
+            <div class="glass-card section-header-card">
+                <div class="section-header">
+                    <h2 class="section-title">My Projects</h2>
+                    <p class="section-subtitle">Some of my recent work</p>
+                </div>
             </div>
+            
             <div class="projects-grid">
                 <div class="glass-card project-card">
                     <div class="project-image">
@@ -245,7 +258,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="glass-card project-card">
                     <div class="project-image">
                         <div class="project-placeholder">
@@ -298,10 +311,14 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Get In Touch</h2>
-                <p class="section-subtitle">Let's work together</p>
+            <!-- Enhanced section header with glassmorphism -->
+            <div class="glass-card section-header-card">
+                <div class="section-header">
+                    <h2 class="section-title">Get In Touch</h2>
+                    <p class="section-subtitle">Let's work together</p>
+                </div>
             </div>
+            
             <div class="contact-content">
                 <div class="contact-info">
                     <div class="glass-card">
@@ -325,10 +342,10 @@
                             </div>
                         </div>
                         <div class="social-links">
-                            <a href="https://www.github.com/ArnavJain041106" class="social-link" target=_blank>
+                            <a href="https://www.github.com/ArnavJain041106" class="social-link" target="_blank">
                                 <i class="fab fa-github"></i>
                             </a>
-                            <a href="https://www.linkedin.com/in/arnavvvjainn" class="social-link" target=_blank>
+                            <a href="https://www.linkedin.com/in/arnavvvjainn" class="social-link" target="_blank">
                                 <i class="fab fa-linkedin"></i>
                             </a>
                         </div>
@@ -367,9 +384,11 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024 Arnav Jain. All rights reserved.</p>
-                <p>Built with ❤️ using HTML, CSS, and Three.js</p>
+            <div class="glass-card footer-card">
+                <div class="footer-content">
+                    <p>&copy; 2024 Arnav Jain. All rights reserved.</p>
+                    <p>Built with ❤️ using HTML, CSS, and Three.js</p>
+                </div>
             </div>
         </div>
     </footer>

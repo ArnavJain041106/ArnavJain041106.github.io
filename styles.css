@@ -139,8 +139,8 @@ body {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
   transition: all .3s ease;
-  transform: translateY(-100%);
-  opacity: 0;
+  transform: translateY(0);
+  opacity: 1;
 }
 .navbar.scrolled {
   transform: translateY(0);

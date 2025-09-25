@@ -216,7 +216,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 30px 20px 0;
+  padding: 30px 20px 50px;
   position: relative;
 }
 .hero-content {
@@ -581,7 +581,7 @@ section { padding: 100px 0; position: relative; }
   .container { padding:0 15px; }
 
   /* HERO – vertical layout */
-  .hero { padding:60px 15px 0; }
+  .hero { padding:20px 15px 40px; }
   .hero-content { max-width:400px; margin:auto; }
   .glass-card.merged-hero-card {
     flex-direction:column;

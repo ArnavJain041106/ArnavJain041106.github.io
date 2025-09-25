@@ -439,8 +439,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     end: 'bottom 20%',
                     toggleActions: 'play none none reverse'
                 },
-                duration: 0.8,
-                y: 50,
+                duration: 0.3,
+                y: 17,
                 opacity: 0,
                 delay: index * 0.1,
                 ease: 'power2.out'

@@ -24,14 +24,19 @@
 [data-theme="light"] {
   --primary-color: #ff6b35; /* Keep your signature orange */
   --secondary-color: #ff8c42; /* Slightly lighter orange */
-  --accent-color: #e65100; /* Deeper orange for contrast */
-  --text-primary: #2d3748; /* Darker text for better readability */
+  --accent-color: #d84315; /* Better contrast orange for accessibility */
+  --text-primary: #1a202c; /* Darker text for better readability (WCAG AA compliant) */
   --text-secondary: #4a5568; /* Muted dark gray */
-  --background-dark: #f8faff;
-  --background-darker: #e8f2ff;
-  --glass-bg: rgba(255,255,255,0.85);
-  --glass-border: rgba(0,0,0,0.15);
-  --shadow-color: rgba(0,0,0,0.15);
+  --background-dark: #f7fafc; /* Softer, more elegant light background */
+  --background-darker: #edf2f7; /* Subtle gradient background */
+  --glass-bg: rgba(255,255,255,0.90); /* Slightly more opaque for better contrast */
+  --glass-border: rgba(0,0,0,0.12); /* Softer borders */
+  --shadow-color: rgba(0,0,0,0.12); /* More subtle shadows */
+}
+
+/* Enhanced light theme body with subtle gradient */
+[data-theme="light"] body {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
 }
 
 /* GLOBAL RESET & BASE */
@@ -105,13 +110,15 @@ body {
 
 /* Enhanced theme toggle for light theme */
 [data-theme="light"] .theme-toggle {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.10);
 }
 
 [data-theme="light"] .theme-toggle:hover {
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .theme-icon {
@@ -127,28 +134,27 @@ body {
 
 /* Enhanced theme icon for light theme */
 [data-theme="light"] .theme-icon {
-  color: #e65100; /* Use the accent orange */
+  color: #d84315; /* Better contrast orange matching accent color */
 }
 
 .theme-icon.sun {
   opacity: 0;
-  transform: rotate(180deg) scale(0);
-   transform: translate(-50%, -50%) rotate(180deg) scale(0);
+  transform: translate(-50%, -50%) rotate(180deg) scale(0);
 }
 
 .theme-icon.moon {
   opacity: 1;
-  transform: rotate(0deg) scale(1);
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 [data-theme="light"] .theme-icon.sun {
   opacity: 1;
-  transform: rotate(0deg) scale(1);
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 [data-theme="light"] .theme-icon.moon {
   opacity: 0;
-  transform: rotate(-180deg) scale(0);
+  transform: translate(-50%, -50%) rotate(-180deg) scale(0);
 }
 
 /* Mobile theme toggle positioning */
@@ -189,14 +195,15 @@ body {
 
 /* Enhanced glass cards for light theme */
 [data-theme="light"] .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .glass-card:hover {
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
 }
 
 /* Remove margin-bottom from last child cards in sections */

@@ -21,11 +21,11 @@
   --accent-color: #e65100;
   --text-primary: #1a1a1a;
   --text-secondary: #4a5568;
-  --background-dark: #f7f9fc;
-  --background-darker: #e2e8f0;
-  --glass-bg: rgba(255,255,255,0.7);
-  --glass-border: rgba(0,0,0,0.1);
-  --shadow-color: rgba(0,0,0,0.1);
+  --background-dark: #f8faff;
+  --background-darker: #e8f2ff;
+  --glass-bg: rgba(255,255,255,0.85);
+  --glass-border: rgba(0,0,0,0.15);
+  --shadow-color: rgba(0,0,0,0.15);
 }
 
 /* GLOBAL RESET & BASE */
@@ -101,26 +101,30 @@ body {
   height: 24px;
   transition: var(--theme-transition);
   color: var(--accent-color);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
 }
 
 .theme-icon.sun {
   opacity: 0;
-  transform: rotate(180deg) scale(0);
+  transform: translate(-50%, -50%) rotate(180deg) scale(0);
 }
 
 .theme-icon.moon {
   opacity: 1;
-  transform: rotate(0deg) scale(1);
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 [data-theme="light"] .theme-icon.sun {
   opacity: 1;
-  transform: rotate(0deg) scale(1);
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 [data-theme="light"] .theme-icon.moon {
   opacity: 0;
-  transform: rotate(-180deg) scale(0);
+  transform: translate(-50%, -50%) rotate(-180deg) scale(0);
 }
 
 /* Mobile theme toggle positioning */
@@ -135,6 +139,22 @@ body {
   .theme-icon {
     width: 20px;
     height: 20px;
+  }
+  
+  .theme-icon.sun {
+    transform: translate(-50%, -50%) rotate(180deg) scale(0);
+  }
+
+  .theme-icon.moon {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+
+  [data-theme="light"] .theme-icon.sun {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+
+  [data-theme="light"] .theme-icon.moon {
+    transform: translate(-50%, -50%) rotate(-180deg) scale(0);
   }
 }
 

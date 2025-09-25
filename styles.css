@@ -388,6 +388,10 @@ section { padding: 100px 0; position: relative; }
   width: 100%;
   max-width: 800px;
 }
+.merged-about-card .section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
 .about-intro {
   margin-bottom: 40px;
 }

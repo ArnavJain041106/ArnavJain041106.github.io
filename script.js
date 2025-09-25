@@ -1,5 +1,5 @@
 // -----------------------------------------------------------
-// Enhanced Portfolio Script – WebGL disabled, optimized scrolling
+// Enhanced Portfolio Script with Theme Toggle - No Navbar
 // -----------------------------------------------------------
 
 let scene, camera, renderer, mouseGlow;
@@ -11,8 +11,90 @@ let isMobile = false;
 let deviceCapabilities = {};
 let particleSystem = null;
 
+// Theme management
+let currentTheme = 'dark';
+
 // -----------------------------------------------------------
-// Device detection and capability assessment (unchanged)
+// Theme Toggle Functionality
+// -----------------------------------------------------------
+function initThemeToggle() {
+    // Get saved theme from localStorage or default to dark
+    const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+    currentTheme = savedTheme;
+    
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    
+    // Create theme toggle button
+    createThemeToggleButton();
+    
+    // Update fallback background
+    updateFallbackBackground();
+}
+
+function createThemeToggleButton() {
+    const themeToggle = document.createElement('button');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.setAttribute('aria-label', 'Toggle theme');
+    themeToggle.innerHTML = `
+        <svg class="theme-icon sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+        </svg>
+    `;
+    
+    themeToggle.addEventListener('click', toggleTheme);
+    document.body.appendChild(themeToggle);
+}
+
+function toggleTheme() {
+    // Create transition overlay
+    const transition = document.createElement('div');
+    transition.className = 'theme-transition';
+    document.body.appendChild(transition);
+    
+    // Trigger transition
+    requestAnimationFrame(() => {
+        transition.classList.add('active');
+    });
+    
+    // Switch theme after short delay
+    setTimeout(() => {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('portfolio-theme', currentTheme);
+        updateFallbackBackground();
+        
+        // Remove transition overlay
+        setTimeout(() => {
+            transition.classList.remove('active');
+            setTimeout(() => {
+                document.body.removeChild(transition);
+            }, 300);
+        }, 150);
+    }, 150);
+}
+
+function updateFallbackBackground() {
+    const fallbackBackground = document.getElementById('fallback-background');
+    if (fallbackBackground) {
+        const bgColor = currentTheme === 'dark' ? '#000000' : '#f7f9fc';
+        fallbackBackground.style.background = bgColor;
+    }
+}
+
+// -----------------------------------------------------------
+// Device detection and capability assessment
 // -----------------------------------------------------------
 function detectDevice() {
     const userAgent = navigator.userAgent;
@@ -42,50 +124,8 @@ function detectDevice() {
 }
 
 // -----------------------------------------------------------
-// Navigation scroll effect - OPTIMIZED with requestAnimationFrame
+// Mobile menu toggle (REMOVED - no navbar)
 // -----------------------------------------------------------
-let ticking = false;
-function updateNavbar() {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    }
-    ticking = false;
-}
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        requestAnimationFrame(updateNavbar);
-        ticking = true;
-    }
-});
-
-// -----------------------------------------------------------
-// Mobile menu toggle
-// -----------------------------------------------------------
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-    });
-}
-
-// -----------------------------------------------------------
-// Close mobile menu when link is clicked
-// -----------------------------------------------------------
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        if (navMenu) {
-            navMenu.classList.remove('active');
-        }
-    });
-});
 
 // -----------------------------------------------------------
 // Smooth scrolling for navigation links
@@ -160,16 +200,23 @@ function initFallbackBackground() {
         canvas.style.display = 'none';
     }
 
-    const fallbackDiv = document.createElement('div');
-    fallbackDiv.style.position = 'fixed';
-    fallbackDiv.style.top = '0';
-    fallbackDiv.style.left = '0';
-    fallbackDiv.style.width = '100%';
-    fallbackDiv.style.height = '100%';
-    fallbackDiv.style.background = '#000000';
-    fallbackDiv.style.zIndex = '-1';
-    fallbackDiv.style.pointerEvents = 'none';
-    document.body.appendChild(fallbackDiv);
+    // Create fallback background with theme support
+    let fallbackDiv = document.getElementById('fallback-background');
+    if (!fallbackDiv) {
+        fallbackDiv = document.createElement('div');
+        fallbackDiv.id = 'fallback-background';
+        fallbackDiv.style.position = 'fixed';
+        fallbackDiv.style.top = '0';
+        fallbackDiv.style.left = '0';
+        fallbackDiv.style.width = '100%';
+        fallbackDiv.style.height = '100%';
+        fallbackDiv.style.zIndex = '-1';
+        fallbackDiv.style.pointerEvents = 'none';
+        fallbackDiv.style.transition = 'background 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        document.body.appendChild(fallbackDiv);
+    }
+    
+    updateFallbackBackground();
 }
 
 // -----------------------------------------------------------
@@ -421,9 +468,12 @@ function animate() {
 }
 
 // -----------------------------------------------------------
-// DOMContentLoaded – start everything with OPTIMIZED animations
+// DOMContentLoaded – start everything with OPTIMIZED animations + THEME TOGGLE
 // -----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize theme toggle FIRST
+    initThemeToggle();
+    
     // Initialise background (WebGL disabled)
     initThree();
 

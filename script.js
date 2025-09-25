@@ -1,6 +1,4 @@
-// -----------------------------------------------------------
 // Enhanced Portfolio Script with Theme Toggle - No Navbar
-// -----------------------------------------------------------
 
 let scene, camera, renderer, mouseGlow;
 let mouseX = 0, mouseY = 0;
@@ -14,9 +12,7 @@ let particleSystem = null;
 // Theme management
 let currentTheme = 'dark';
 
-// -----------------------------------------------------------
 // Theme Toggle Functionality
-// -----------------------------------------------------------
 function initThemeToggle() {
     // Get saved theme from localStorage or default to dark
     const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
@@ -93,9 +89,7 @@ function updateFallbackBackground() {
     }
 }
 
-// -----------------------------------------------------------
 // Device detection and capability assessment
-// -----------------------------------------------------------
 function detectDevice() {
     const userAgent = navigator.userAgent;
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
@@ -123,13 +117,9 @@ function detectDevice() {
     return deviceCapabilities;
 }
 
-// -----------------------------------------------------------
 // Mobile menu toggle (REMOVED - no navbar)
-// -----------------------------------------------------------
 
-// -----------------------------------------------------------
 // Smooth scrolling for navigation links
-// -----------------------------------------------------------
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -143,9 +133,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// -----------------------------------------------------------
 // Animate skill progress bars when in view
-// -----------------------------------------------------------
 const observerOptions = {
     threshold: 0.5,
     rootMargin: '0px 0px -50px 0px'
@@ -168,9 +156,7 @@ if (skillsSection) {
     progressObserver.observe(skillsSection);
 }
 
-// -----------------------------------------------------------
 // Contact form handling
-// -----------------------------------------------------------
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
@@ -191,9 +177,7 @@ if (contactForm) {
     });
 }
 
-// -----------------------------------------------------------
-// Fallback for non‑WebGL browsers (used for every device now)
-// -----------------------------------------------------------
+// Fallback for non-WebGL browsers (used for every device now)
 function initFallbackBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
@@ -219,9 +203,7 @@ function initFallbackBackground() {
     updateFallbackBackground();
 }
 
-// -----------------------------------------------------------
-// Screen‑to‑world conversion (kept for completeness – not used)
-// -----------------------------------------------------------
+// Screen-to-world conversion (kept for completeness - not used)
 function screenToWorld(screenX, screenY) {
     const vector = new THREE.Vector3();
     vector.set(
@@ -236,9 +218,7 @@ function screenToWorld(screenX, screenY) {
     return pos;
 }
 
-// -----------------------------------------------------------
-// Enhanced mouse glow – now exactly 0.3 inches
-// -----------------------------------------------------------
+// Enhanced mouse glow - now exactly 0.3 inches
 function createEnhancedMouseGlow() {
     try {
         // Skip on mobile – original behaviour
@@ -306,9 +286,7 @@ function createEnhancedMouseGlow() {
     }
 }
 
-// -----------------------------------------------------------
-// createEnhancedParticleSystem (kept – never called now)
-// -----------------------------------------------------------
+// createEnhancedParticleSystem (kept - never called now)
 function createEnhancedParticleSystem() {
     try {
         const particleCount = deviceCapabilities.maxParticles;
@@ -379,9 +357,7 @@ function createEnhancedParticleSystem() {
     }
 }
 
-// -----------------------------------------------------------
-// initThree – WebGL disabled, always use fallback background
-// -----------------------------------------------------------
+// initThree - WebGL disabled, always use fallback background
 function initThree() {
     try {
         // Device detection (kept for UI tweaks)
@@ -409,9 +385,7 @@ function initThree() {
     }
 }
 
-// -----------------------------------------------------------
-// Window resize handler (safe – exits early if no camera/renderer)
-// -----------------------------------------------------------
+// Window resize handler (safe - exits early if no camera/renderer)
 function onWindowResize() {
     if (!camera || !renderer) return;
 
@@ -420,9 +394,7 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// -----------------------------------------------------------
 // Animation loop (will simply not run because renderer is null)
-// -----------------------------------------------------------
 function animate() {
     requestAnimationFrame(animate);
 
@@ -467,9 +439,7 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// -----------------------------------------------------------
-// DOMContentLoaded – start everything with OPTIMIZED animations + THEME TOGGLE
-// -----------------------------------------------------------
+// DOMContentLoaded - start everything with OPTIMIZED animations + THEME TOGGLE
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme toggle FIRST
     initThemeToggle();
@@ -492,9 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // REMOVED: Heavy ScrollTrigger animations replaced with efficient Intersection Observer below
     }
 
-    // -----------------------------------------------------------
     // OPTIMIZED: Efficient scroll animations with Intersection Observer
-    // -----------------------------------------------------------
     const animateOnScrollObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -518,9 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animateOnScrollObserver.observe(card);
     });
 
-    // -----------------------------------------------------------
     // Respect user's motion preferences
-    // -----------------------------------------------------------
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         // Disable animations for users who prefer reduced motion
         document.querySelectorAll('.glass-card').forEach(card => {

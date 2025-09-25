@@ -55,8 +55,8 @@ body {
    ============================================================== */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   box-shadow:
@@ -65,7 +65,8 @@ body {
   padding: 30px;
   position: relative;
   overflow: hidden;
-  transition: all .3s ease;
+  transition: transform .3s ease, box-shadow .3s ease;
+  will-change: transform;
 }
 .glass-card:hover {
   transform: translateY(-2px);
@@ -138,9 +139,9 @@ body {
   right: 0;
   z-index: 1000;
   background: rgba(0,0,0,.8);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--glass-border);
-  transition: all .3s ease;
+  transition: transform .3s ease, opacity .3s ease;
   transform: translateY(-100%);
   opacity: 0;
 }
@@ -174,7 +175,7 @@ body {
   text-decoration: none;
   font-weight: 500;
   position: relative;
-  transition: all .3s ease;
+  transition: color .3s ease;
 }
 .nav-link:hover { color: var(--text-primary); }
 .nav-link::after {
@@ -282,7 +283,7 @@ body {
   border-radius: 50px;
   position: relative;
   overflow: hidden;
-  transition: all .3s ease;
+  transition: transform .3s ease, box-shadow .3s ease;
 }
 .btn-primary {
   background: linear-gradient(135deg,var(--primary-color),var(--secondary-color));
@@ -298,6 +299,7 @@ body {
   color: var(--text-primary);
   border: 2px solid var(--glass-border);
   backdrop-filter: blur(10px);
+  transition: transform .3s ease, background .3s ease;
 }
 .btn-secondary:hover {
   background: var(--glass-bg);
@@ -477,7 +479,11 @@ section { padding: 100px 0; position: relative; }
   grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
   gap:30px;
 }
-.skill-card { text-align:center; transition:transform .3s ease; }
+.skill-card { 
+  text-align:center; 
+  transition: transform .3s ease;
+  will-change: transform;
+}
 .skill-card:hover { transform:translateY(-10px); }
 .skill-icon { font-size:3rem; margin-bottom:20px; color:var(--accent-color); }
 .skill-card h3 { font-size:1.5rem; margin-bottom:20px; color:var(--text-primary); }
@@ -498,7 +504,11 @@ section { padding: 100px 0; position: relative; }
   grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
   gap:40px;
 }
-.project-card { transition:transform .3s ease; overflow:hidden; }
+.project-card { 
+  transition: transform .3s ease; 
+  will-change: transform;
+  overflow:hidden; 
+}
 .project-card:hover { transform:translateY(-10px); }
 .project-image {
   height:200px; background:var(--background-darker);
@@ -545,7 +555,7 @@ section { padding: 100px 0; position: relative; }
   border-radius:50%;
   display:flex; align-items:center; justify-content:center;
   color:var(--text-secondary); text-decoration:none;
-  transition:all .3s ease;
+  transition: transform .3s ease, background .3s ease, color .3s ease;
 }
 .social-link:hover {
   background:linear-gradient(135deg,var(--primary-color),var(--accent-color));
@@ -613,6 +623,7 @@ section { padding: 100px 0; position: relative; }
 
   .section-title { font-size:2.5rem; }
 }
+
 /* ==============================================================
    8. FIXED FALLBACK BACKGROUND (no annoying glow)
    ============================================================== */
@@ -653,5 +664,16 @@ section { padding: 100px 0; position: relative; }
     height: 40px; 
     font-size: 1.1rem;
     margin: 0 auto;
+  }
+}
+
+/* ==============================================================
+   9. ACCESSIBILITY & PERFORMANCE OPTIMIZATIONS
+   ============================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { 
+    animation-duration: 0.01ms !important; 
+    transition-duration: 0.01ms !important; 
   }
 }

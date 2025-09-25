@@ -27,11 +27,11 @@
   --accent-color: #e65100; /* Deeper orange for contrast */
   --text-primary: #2d3748; /* Darker text for better readability */
   --text-secondary: #4a5568; /* Muted dark gray */
-  --background-dark: #f8fafc; /* Very light, clean background */
-  --background-darker: #edf2f7; /* Slightly darker for contrast */
-  --glass-bg: rgba(255, 255, 255, 0.85); /* Cleaner white with slight transparency */
-  --glass-border: rgba(0, 0, 0, 0.08); /* Subtle dark border */
-  --shadow-color: rgba(0, 0, 0, 0.08); /* Lighter, softer shadows */
+  --background-dark: #f8faff;
+  --background-darker: #e8f2ff;
+  --glass-bg: rgba(255,255,255,0.85);
+  --glass-border: rgba(0,0,0,0.15);
+  --shadow-color: rgba(0,0,0,0.15);
 }
 
 /* GLOBAL RESET & BASE */
@@ -119,6 +119,10 @@ body {
   height: 24px;
   transition: var(--theme-transition);
   color: var(--accent-color);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
 }
 
 /* Enhanced theme icon for light theme */
@@ -129,6 +133,7 @@ body {
 .theme-icon.sun {
   opacity: 0;
   transform: rotate(180deg) scale(0);
+   transform: translate(-50%, -50%) rotate(180deg) scale(0);
 }
 
 .theme-icon.moon {

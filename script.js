@@ -88,6 +88,41 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 // -----------------------------------------------------------
+// Theme toggle functionality
+// -----------------------------------------------------------
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = themeToggle.querySelector('i');
+
+// Check for saved theme preference or default to dark theme
+const currentTheme = localStorage.getItem('theme') || 'dark';
+
+// Apply the saved theme on page load
+if (currentTheme === 'light') {
+    document.documentElement.classList.add('light-theme');
+    themeIcon.classList.remove('fa-moon');
+    themeIcon.classList.add('fa-sun');
+}
+
+// Theme toggle event listener
+themeToggle.addEventListener('click', () => {
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
+    
+    if (isLightTheme) {
+        // Switch to dark theme
+        document.documentElement.classList.remove('light-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        // Switch to light theme
+        document.documentElement.classList.add('light-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// -----------------------------------------------------------
 // Smooth scrolling for navigation links
 // -----------------------------------------------------------
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

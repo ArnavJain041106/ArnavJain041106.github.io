@@ -1,5 +1,5 @@
 // -----------------------------------------------------------
-// Enhanced Portfolio Script – WebGL disabled, 0.3‑inch glow
+// Enhanced Portfolio Script – WebGL disabled, optimized scrolling
 // -----------------------------------------------------------
 
 let scene, camera, renderer, mouseGlow;
@@ -42,9 +42,10 @@ function detectDevice() {
 }
 
 // -----------------------------------------------------------
-// Navigation scroll effect
+// Navigation scroll effect - OPTIMIZED with requestAnimationFrame
 // -----------------------------------------------------------
-window.addEventListener('scroll', () => {
+let ticking = false;
+function updateNavbar() {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         if (window.scrollY > 100) {
@@ -52,6 +53,14 @@ window.addEventListener('scroll', () => {
         } else {
             navbar.classList.remove('scrolled');
         }
+    }
+    ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        requestAnimationFrame(updateNavbar);
+        ticking = true;
     }
 });
 
@@ -181,7 +190,7 @@ function screenToWorld(screenX, screenY) {
 }
 
 // -----------------------------------------------------------
-// Enhanced mouse glow – now exactly 0.3 inches
+// Enhanced mouse glow – now exactly 0.3 inches
 // -----------------------------------------------------------
 function createEnhancedMouseGlow() {
     try {
@@ -190,10 +199,10 @@ function createEnhancedMouseGlow() {
             return null;
         }
 
-        // ---------- 0.3 in → pixels (respecting device pixel‑ratio) ----------
+        // ---------- 0.3 in → pixels (respecting device pixel‑ratio) ----------
         const DPI = 96;                    // CSS reference DPI
         const INCHES = 0.3;
-        const glowSizePixels = Math.round(INCHES * DPI * window.devicePixelRatio); // ≈29 px for 1× screens
+        const glowSizePixels = Math.round(INCHES * DPI * window.devicePixelRatio); // ≈29 px for 1× screens
 
         // Plane geometry uses world units; we feed the pixel size directly.
         const glowGeometry = new THREE.PlaneGeometry(glowSizePixels, glowSizePixels);
@@ -412,17 +421,17 @@ function animate() {
 }
 
 // -----------------------------------------------------------
-// DOMContentLoaded – start everything
+// DOMContentLoaded – start everything with OPTIMIZED animations
 // -----------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     // Initialise background (WebGL disabled)
     initThree();
 
-    // GSAP Animations (if GSAP is loaded)
+    // GSAP Animations (if GSAP is loaded) - OPTIMIZED VERSION
     if (typeof gsap !== 'undefined' && gsap.registerPlugin) {
         gsap.registerPlugin(ScrollTrigger);
 
-        // Hero section animation
+        // Hero section animation (keep this - it's good)
         gsap.from('.merged-hero-card', {
             duration: 1,
             y: 100,
@@ -430,21 +439,44 @@ document.addEventListener('DOMContentLoaded', () => {
             ease: 'power3.out'
         });
 
-        // Section animations
-        gsap.utils.toArray('.glass-card').forEach((card, index) => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 80%',
-                    end: 'bottom 20%',
-                    toggleActions: 'play none none reverse'
-                },
-                duration: 0.3,
-                y: 17,
-                opacity: 0,
-                delay: index * 0.1,
-                ease: 'power2.out'
-            });
+        // REMOVED: Heavy ScrollTrigger animations replaced with efficient Intersection Observer below
+    }
+
+    // -----------------------------------------------------------
+    // OPTIMIZED: Efficient scroll animations with Intersection Observer
+    // -----------------------------------------------------------
+    const animateOnScrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.transform = 'translateY(0)';
+                entry.target.style.opacity = '1';
+            }
+        });
+    }, { 
+        threshold: 0.1, 
+        rootMargin: '50px' 
+    });
+
+    // Apply to all glass cards except hero card
+    document.querySelectorAll('.glass-card:not(.merged-hero-card)').forEach(card => {
+        // Set initial state
+        card.style.transform = 'translateY(17px)';
+        card.style.opacity = '0';
+        card.style.transition = 'transform 0.6s ease, opacity 0.6s ease';
+        
+        // Observe for intersection
+        animateOnScrollObserver.observe(card);
+    });
+
+    // -----------------------------------------------------------
+    // Respect user's motion preferences
+    // -----------------------------------------------------------
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Disable animations for users who prefer reduced motion
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.transform = 'none';
+            card.style.opacity = '1';
+            card.style.transition = 'none';
         });
     }
 });

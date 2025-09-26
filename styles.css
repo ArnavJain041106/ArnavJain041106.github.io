@@ -680,7 +680,153 @@ section {
   color: #4a5568;
 }
 
-/* SKILLS SECTION */
+/* SKILLS SECTION - MERGED CARD VERSION */
+.merged-skills-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--theme-transition);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.merged-skills-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px var(--shadow-color);
+}
+
+/* Enhanced merged skills card for light theme */
+[data-theme="light"] .merged-skills-card {
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .merged-skills-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Skills grid inside the merged card */
+.skills-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* Individual skill items within the merged card */
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 25px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid var(--glass-border);
+  transition: var(--theme-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-item:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+/* Enhanced skill items for light theme */
+[data-theme="light"] .skill-item {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .skill-item:hover {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Skill icon styling */
+.skill-item .skill-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+  transition: var(--theme-transition);
+}
+
+/* Enhanced skill icons for light theme */
+[data-theme="light"] .skill-item .skill-icon {
+  color: #e65100;
+}
+
+/* Skill title */
+.skill-item h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: var(--theme-transition);
+}
+
+/* Enhanced skill titles for light theme */
+[data-theme="light"] .skill-item h3 {
+  color: #2d3748;
+}
+
+/* Skill progress bar */
+.skill-item .skill-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--background-darker);
+  border-radius: 3px;
+  overflow: hidden;
+  transition: var(--theme-transition);
+  position: relative;
+}
+
+/* Enhanced skill bars for light theme */
+[data-theme="light"] .skill-item .skill-bar {
+  background: #edf2f7;
+}
+
+.skill-item .skill-progress {
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 2s ease;
+  position: relative;
+}
+
+/* Enhanced skill progress for light theme */
+[data-theme="light"] .skill-item .skill-progress {
+  background: linear-gradient(135deg, #ff6b35, #e65100);
+}
+
+/* Progress percentage display */
+.skill-item .skill-percentage {
+  position: absolute;
+  top: -25px;
+  right: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: var(--theme-transition);
+}
+
+/* Enhanced skill percentage for light theme */
+[data-theme="light"] .skill-item .skill-percentage {
+  color: #4a5568;
+}
+
+/* Legacy skill card styles - keeping for backward compatibility */
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -757,302 +903,4 @@ section {
   transition: var(--theme-transition);
   will-change: transform;
   overflow: hidden;
-  margin-bottom: 0; /* Remove individual margin since we use gap */
-}
-
-.project-card:hover { transform: translateY(-10px); }
-
-.project-image {
-  height: 200px;
-  background: var(--background-darker);
-  border-radius: 15px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--theme-transition);
-}
-
-.project-placeholder {
-  font-size: 3rem;
-  color: var(--accent-color);
-  opacity: .5;
-  transition: var(--theme-transition);
-}
-
-.project-content h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: var(--text-primary);
-  transition: var(--theme-transition);
-}
-
-/* Enhanced project content for light theme */
-[data-theme="light"] .project-content h3 {
-  color: #2d3748;
-}
-
-.project-content p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 20px;
-  transition: var(--theme-transition);
-}
-
-/* Enhanced project content for light theme */
-[data-theme="light"] .project-content p {
-  color: #4a5568;
-}
-
-.tech-tag {
-  background: var(--glass-bg);
-  color: var(--accent-color);
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: .85rem;
-  border: 1px solid var(--glass-border);
-  transition: var(--theme-transition);
-}
-
-/* Enhanced tech tags for light theme */
-[data-theme="light"] .tech-tag {
-  background: rgba(255, 255, 255, 0.7);
-  color: #e65100;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-/* CONTACT SECTION */
-.contact-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  margin-bottom: 0;
-}
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.contact-item:last-child {
-  margin-bottom: 0;
-}
-
-.contact-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: #fff;
-}
-
-.contact-details h4 {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  color: var(--text-primary);
-  transition: var(--theme-transition);
-}
-
-/* Enhanced contact details for light theme */
-[data-theme="light"] .contact-details h4 {
-  color: #2d3748;
-}
-
-.contact-details p {
-  color: var(--text-secondary);
-  transition: var(--theme-transition);
-}
-
-/* Enhanced contact details for light theme */
-[data-theme="light"] .contact-details p {
-  color: #4a5568;
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.social-link {
-  width: 50px;
-  height: 50px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: var(--theme-transition);
-}
-
-.social-link:hover {
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  color: #fff;
-  transform: translateY(-5px);
-}
-
-/* FOOTER */
-.footer {
-  background: var(--background-darker);
-  padding: 40px 0;
-  text-align: center;
-  border-top: 1px solid var(--glass-border);
-  transition: var(--theme-transition);
-}
-
-/* Enhanced footer for light theme */
-[data-theme="light"] .footer {
-  background: #edf2f7;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.footer-content p {
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-  transition: var(--theme-transition);
-}
-
-/* Enhanced footer content for light theme */
-[data-theme="light"] .footer-content p {
-  color: #4a5568;
-}
-
-/* RESPONSIVE (single breakpoint) */
-@media (max-width: 768px) {
-  section {
-    padding: var(--section-spacing-mobile);
-  }
-
-  .container { padding: 0 15px; }
-
-  /* HERO – vertical layout */
-  .hero { padding: 40px 15px; }
-  .hero-content { max-width: 400px; margin: auto; }
-
-  .glass-card {
-    margin-bottom: var(--card-spacing-mobile);
-  }
-
-  .glass-card.merged-hero-card {
-    flex-direction: column;
-    gap: 30px;
-    padding: 30px 20px;
-    text-align: center;
-    margin-bottom: var(--card-spacing-mobile);
-  }
-
-  .merged-hero-content { flex-direction: column; gap: 30px; }
-  .merged-hero-image { order: -1; flex: none; }
-  .profile-img { width: 220px; height: 220px; }
-  .hero-title { font-size: 2.2rem; margin-bottom: 15px; }
-  .hero-subtitle { font-size: 1.2rem; margin-bottom: 12px; }
-  .hero-description { font-size: 1rem; margin-bottom: 25px; }
-  .hero-buttons { flex-direction: column; gap: 15px; align-items: center; }
-  .btn { width: 200px; justify-content: center; }
-
-  .about-content,
-  .contact-content { grid-template-columns: 1fr; gap: 30px; }
-  .projects-grid,
-  .skills-grid { grid-template-columns: 1fr; gap: 25px; }
-
-  /* About section mobile adjustments */
-  .merged-about-card { padding: 30px 25px; }
-  .about-stats { grid-template-columns: 1fr; gap: 15px; }
-  .skill-categories { gap: 20px; }
-  .skill-category { padding: 15px; }
-  .category-icon { width: 45px; height: 45px; font-size: 1.2rem; }
-  .about-section h3 { font-size: 1.6rem; }
-
-  .section-title { font-size: 2.5rem; }
-  .section-header { margin-bottom: 40px; }
-}
-
-/* Small phones - tiny tweaks */
-@media (max-width: 480px) {
-  .glass-card.merged-hero-card {
-    padding: 25px 15px;
-    margin-bottom: var(--card-spacing-mobile);
-  }
-  .profile-img { width: 180px; height: 180px; }
-  .hero-title { font-size: 1.8rem; }
-  .hero-subtitle { font-size: 1.1rem; }
-  .hero-description { font-size: .95rem; }
-  .section-title { font-size: 2rem; }
-
-  /* About section small mobile adjustments */
-  .merged-about-card { padding: 25px 20px; }
-  .about-stats { grid-template-columns: 1fr; }
-  .stat-item { padding: 15px; }
-  .stat-number { font-size: 2rem; }
-  .skill-category {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-  }
-  .category-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-    margin: 0 auto;
-  }
-
-  .skills-grid,
-  .projects-grid {
-    gap: 20px;
-  }
-
-  .about-stats {
-    gap: 10px;
-  }
-}
-
-/* FIXED FALLBACK BACKGROUND */
-#fallback-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--background-dark);
-  z-index: -1;
-  pointer-events: none;
-  transition: var(--theme-transition);
-}
-
-/* ACCESSIBILITY & PERFORMANCE OPTIMIZATIONS */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* THEME TRANSITION ANIMATION */
-.theme-transition {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--background-dark);
-  opacity: 0;
-  visibility: hidden;
-  z-index: 9999;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  pointer-events: none;
-}
-
-.theme-transition.active {
-  opacity: 1;
-  visibility: visible;
-}
+  margin-bottom: 0; /* Remove

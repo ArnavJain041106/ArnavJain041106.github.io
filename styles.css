@@ -999,6 +999,113 @@ section {
   color: #ff6b35;
 }
 
+/* DYNAMIC PROJECT ENHANCEMENTS */
+.project-image-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  transition: var(--theme-transition);
+}
+
+.project-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  color: var(--text-secondary);
+  font-size: 3rem;
+  transition: var(--theme-transition);
+}
+
+[data-theme="light"] .project-placeholder {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* LOADING STATES */
+.loading-card {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.loading-skeleton {
+  animation: pulse 2s infinite;
+}
+
+.skeleton-title {
+  height: 24px;
+  background: var(--glass-bg);
+  border-radius: 4px;
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+
+.skeleton-text {
+  height: 16px;
+  background: var(--glass-bg);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  opacity: 0.4;
+}
+
+.skeleton-text:last-child {
+  width: 70%;
+}
+
+[data-theme="light"] .skeleton-title,
+[data-theme="light"] .skeleton-text {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ERROR STATE */
+.error-card {
+  text-align: center;
+}
+
+.error-card h3 {
+  color: #ff6b6b;
+  margin-bottom: 15px;
+}
+
+.error-card i {
+  margin-right: 8px;
+}
+
+/* ENHANCED PROJECT ANIMATIONS */
+.project-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.project-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 60px var(--shadow-color);
+}
+
+[data-theme="light"] .project-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.project-card:hover .project-image-img {
+  transform: scale(1.05);
+}
+
+.project-card:hover .project-placeholder {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.05);
+}
+
 /* CONTACT SECTION */
 .contact {
   padding: var(--section-spacing);

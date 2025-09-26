@@ -1637,3 +1637,128 @@ section {
 [data-theme="light"] .loading-overlay {
   background: var(--background-dark);
 }
+
+/* PROJECTS PAGE NAVIGATION */
+.nav-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: var(--theme-transition);
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--theme-transition);
+  padding: 10px 20px;
+  border-radius: 25px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.nav-back:hover {
+  color: var(--primary-color);
+  transform: translateX(-3px);
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.nav-back i {
+  font-size: 1rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Enhanced navigation for light theme */
+[data-theme="light"] .nav-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .nav-back {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .nav-back:hover {
+  background: rgba(255, 107, 53, 0.1);
+}
+
+/* PROJECTS PAGE SPECIFIC STYLES */
+.projects-page {
+  padding-top: 140px !important; /* Account for fixed navigation */
+  min-height: calc(100vh - 140px);
+}
+
+.projects-page .section-header-card {
+  margin-bottom: 40px;
+}
+
+.projects-page .section-subtitle {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Mobile responsive navigation */
+@media (max-width: 768px) {
+  .nav-header {
+    padding: 15px 0;
+  }
+  
+  .nav-content {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    align-self: center;
+  }
+  
+  .nav-back {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .projects-page {
+    padding-top: 160px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.3rem;
+  }
+  
+  .nav-back {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .projects-page {
+    padding-top: 170px !important;
+  }
+}

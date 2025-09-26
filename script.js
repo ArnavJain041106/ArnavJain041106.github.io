@@ -495,4 +495,172 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transition = 'none';
         });
     }
+
+    // Initialize enhanced animations
+    initEnhancedAnimations();
 });
+
+// Enhanced Animations and Interactive Features
+function initEnhancedAnimations() {
+    // Back to top button
+    initBackToTopButton();
+    
+    // Scroll progress bar
+    initScrollProgress();
+    
+    // Animated counters
+    initAnimatedCounters();
+    
+    // Skill progress bars animation
+    initSkillProgressBars();
+    
+    // Staggered skill items animation
+    initStaggeredSkillAnimation();
+    
+    // Typing animation for hero text
+    initTypingAnimation();
+}
+
+// Back to Top Button
+function initBackToTopButton() {
+    const backToTopBtn = document.getElementById('back-to-top');
+    if (!backToTopBtn) return;
+
+    // Show/hide button based on scroll position
+    function toggleBackToTop() {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    }
+
+    // Smooth scroll to top
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    window.addEventListener('scroll', toggleBackToTop);
+}
+
+// Scroll Progress Bar
+function initScrollProgress() {
+    const progressBar = document.getElementById('scroll-progress');
+    if (!progressBar) return;
+
+    function updateScrollProgress() {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+    }
+
+    window.addEventListener('scroll', updateScrollProgress);
+}
+
+// Animated Counters
+function initAnimatedCounters() {
+    const counters = document.querySelectorAll('.stat-number');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => counterObserver.observe(counter));
+}
+
+function animateCounter(element) {
+    const target = element.textContent;
+    const isInfinity = target.includes('∞');
+    
+    if (isInfinity) {
+        element.classList.add('animated');
+        return;
+    }
+
+    const finalNumber = parseInt(target);
+    let currentNumber = 0;
+    const increment = finalNumber / 50;
+    const duration = 2000; // 2 seconds
+    const stepTime = duration / 50;
+
+    element.classList.add('animated');
+
+    const counter = setInterval(() => {
+        currentNumber += increment;
+        if (currentNumber >= finalNumber) {
+            currentNumber = finalNumber;
+            clearInterval(counter);
+        }
+        element.textContent = Math.floor(currentNumber) + '+';
+    }, stepTime);
+}
+
+// Skill Progress Bars Animation
+function initSkillProgressBars() {
+    const skillBars = document.querySelectorAll('.skill-progress');
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const progressBar = entry.target;
+                const progress = progressBar.getAttribute('data-progress');
+                progressBar.style.setProperty('--progress-width', progress + '%');
+                progressBar.classList.add('animated');
+                skillObserver.unobserve(progressBar);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    skillBars.forEach(bar => skillObserver.observe(bar));
+}
+
+// Staggered Skill Items Animation
+function initStaggeredSkillAnimation() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    const skillItemObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animated');
+                }, index * 100); // Stagger by 100ms
+                skillItemObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    skillItems.forEach(item => skillItemObserver.observe(item));
+}
+
+// Typing Animation for Hero Text
+function initTypingAnimation() {
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    if (!heroSubtitle) return;
+
+    const text = heroSubtitle.textContent;
+    heroSubtitle.textContent = '';
+    heroSubtitle.classList.add('typing-animation');
+
+    let i = 0;
+    function typeWriter() {
+        if (i < text.length) {
+            heroSubtitle.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 100);
+        } else {
+            // Remove typing cursor after completion
+            setTimeout(() => {
+                heroSubtitle.style.borderRight = 'none';
+            }, 1000);
+        }
+    }
+
+    // Start typing animation after a short delay
+    setTimeout(typeWriter, 1500);
+}

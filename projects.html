@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects - Arnav Jain</title>
+<link rel="icon" type="image/png" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabase = window.supabase.createClient(
+  "https://kgdaexxubboaytdmhbrw.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnZGFleHh1YmJvYXl0ZG1oYnJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MjAyMDEsImV4cCI6MjA3NDE5NjIwMX0.JvE0hVMTkVy-5jHjaXC05NOxQtvxMv7zQMtanmw66cw"
+);
+</script>
+</head>
+<body>
+
+<!-- 3D Background Canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Loading Animation -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-spinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+  </div>
+</div>
+
+<!-- Navigation Header -->
+<nav class="nav-header">
+  <div class="container">
+    <div class="nav-content">
+      <a href="index.html" class="nav-back">
+        <i class="fas fa-arrow-left"></i>
+        Back to Portfolio
+      </a>
+      <h1 class="page-title">My Projects</h1>
+    </div>
+  </div>
+</nav>
+
+<!-- Projects Section -->
+<section id="projects" class="projects projects-page">
+  <div class="container">
+    <div class="glass-card section-header-card">
+      <div class="section-header">
+        <h2 class="section-title">My Projects</h2>
+        <p class="section-subtitle">A comprehensive showcase of my recent work and development journey</p>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <!-- Projects will be loaded dynamically from Supabase -->
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="glass-card footer-card">
+      <div class="footer-content">
+        <p>&copy; 2024 Arnav Jain. All rights reserved.</p>
+        <p>Built with ❤ using Artificial intelligence</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" class="back-to-top" aria-label="Back to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress" class="scroll-progress"></div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="index.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

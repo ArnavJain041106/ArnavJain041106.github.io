@@ -153,10 +153,14 @@ async function loadProjects() {
   renderProjects(projects);
 }
 
-// Initialize projects when DOM is loaded
+// Initialize projects when DOM is loaded - only on projects page
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Initializing dynamic projects...');
-  loadProjects();
+  // Check if we're on the projects page by looking for projects-grid element
+  const projectsGrid = document.querySelector('.projects-grid');
+  if (projectsGrid) {
+    console.log('🚀 Initializing dynamic projects...');
+    loadProjects();
+  }
 });
 
 // Test Supabase connection

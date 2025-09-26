@@ -132,38 +132,54 @@ const supabase = window.supabase.createClient(
         <p class="section-subtitle">Technologies I work with</p>
       </div>
     </div>
-    <div class="skills-grid">
-      <div class="glass-card skill-card">
+    <div class="merged-skills-card">
+  <div class="skills-interactive-container">
+    <!-- Clickable skill panes -->
+    <div class="skills-panes-grid">
+      <div class="skill-pane active" data-skill="html" data-level="85">
         <div class="skill-icon"><i class="fab fa-html5"></i></div>
-        <h3>HTML5</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="85"></div></div>
+        <h4>HTML5</h4>
       </div>
-      <div class="glass-card skill-card">
+      <div class="skill-pane" data-skill="css" data-level="80">
         <div class="skill-icon"><i class="fab fa-css3-alt"></i></div>
-        <h3>CSS3</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="80"></div></div>
+        <h4>CSS3</h4>
       </div>
-      <div class="glass-card skill-card">
+      <div class="skill-pane" data-skill="javascript" data-level="75">
         <div class="skill-icon"><i class="fab fa-js-square"></i></div>
-        <h3>JavaScript</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="75"></div></div>
+        <h4>JavaScript</h4>
       </div>
-      <div class="glass-card skill-card">
+      <div class="skill-pane" data-skill="react" data-level="70">
         <div class="skill-icon"><i class="fab fa-react"></i></div>
-        <h3>React</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="70"></div></div>
+        <h4>React</h4>
       </div>
-      <div class="glass-card skill-card">
+      <div class="skill-pane" data-skill="nodejs" data-level="65">
         <div class="skill-icon"><i class="fab fa-node-js"></i></div>
-        <h3>Node.js</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="65"></div></div>
+        <h4>Node.js</h4>
       </div>
-      <div class="glass-card skill-card">
+      <div class="skill-pane" data-skill="mongodb" data-level="60">
         <div class="skill-icon"><i class="fas fa-database"></i></div>
-        <h3>MongoDB</h3>
-        <div class="skill-bar"><div class="skill-progress" data-progress="60"></div></div>
+        <h4>MongoDB</h4>
       </div>
     </div>
+
+    <!-- Progress section -->
+    <div class="skills-progress-section">
+      <div class="selected-skill-info">
+        <div class="selected-skill-name" id="selectedSkillName">HTML5</div>
+        <div class="selected-skill-level" id="selectedSkillLevel">Advanced - Building semantic, accessible web structures</div>
+      </div>
+      
+      <div class="main-progress-container">
+        <div class="main-progress-bar">
+          <div class="main-progress-fill" id="mainProgressFill"></div>
+          <div class="main-progress-percentage" id="mainProgressPercentage">85%</div>
+        </div>
+      </div>
+      
+      <p class="skills-instruction">Click on any skill above to see proficiency level</p>
+    </div>
+  </div>
+</div>
   </div>
 </section>
 

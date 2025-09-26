@@ -1710,7 +1710,7 @@ section {
   min-height: calc(100vh - 140px);
 }
 
-.projects-page .section-header-card {
+.projects-page .section-header {
   margin-bottom: 40px;
 }
 

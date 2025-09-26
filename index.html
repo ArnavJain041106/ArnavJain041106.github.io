@@ -23,6 +23,15 @@ const supabase = window.supabase.createClient(
 <!-- 3D Background Canvas -->
 <canvas id="bg-canvas"></canvas>
 
+<!-- Loading Animation -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-spinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+    <div class="spinner-ring"></div>
+  </div>
+</div>
+
 <!-- Hero Section -->
 <section id="home" class="hero">
   <div class="hero-content">
@@ -53,6 +62,12 @@ const supabase = window.supabase.createClient(
           <img src="portfolio-image.png" alt="Arnav Jain" class="profile-img">
         </div>
       </div>
+    </div>
+  </div>
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
     </div>
   </div>
 </section>
@@ -212,6 +227,7 @@ const supabase = window.supabase.createClient(
           </div>
           <div class="project-links">
             <a href="https://github.com/ArnavJain041106/ArnavJain041106.github.io" class="btn btn-small btn-outline" target="_blank"><i class="fab fa-github"></i>Code</a>
+            <a href="#home" class="btn btn-small btn-primary" onclick="event.preventDefault(); document.getElementById('home').scrollIntoView({behavior: 'smooth'});"><i class="fas fa-external-link-alt"></i>Live Demo</a>
           </div>
         </div>
       </div>
@@ -306,6 +322,14 @@ const supabase = window.supabase.createClient(
     </div>
   </div>
 </footer>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" class="back-to-top" aria-label="Back to top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress" class="scroll-progress"></div>
 
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

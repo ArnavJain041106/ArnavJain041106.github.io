@@ -502,6 +502,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Enhanced Animations and Interactive Features
 function initEnhancedAnimations() {
+    // Hide loading overlay
+    setTimeout(() => {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loadingOverlay.remove();
+            }, 500);
+        }
+    }, 1000);
+
     // Back to top button
     initBackToTopButton();
     
@@ -519,6 +530,9 @@ function initEnhancedAnimations() {
     
     // Typing animation for hero text
     initTypingAnimation();
+    
+    // Parallax effects
+    initParallaxEffects();
 }
 
 // Back to Top Button
@@ -661,6 +675,42 @@ function initTypingAnimation() {
         }
     }
 
-    // Start typing animation after a short delay
-    setTimeout(typeWriter, 1500);
+    // Start typing animation after loading is complete
+    setTimeout(typeWriter, 2500); // Delayed until after loading animation
+}
+
+// Parallax Effects
+function initParallaxEffects() {
+    let ticking = false;
+
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        // Apply parallax to hero section
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+            heroSection.style.transform = `translateY(${rate}px)`;
+        }
+        
+        // Apply subtle parallax to profile image
+        const profileImg = document.querySelector('.profile-img');
+        if (profileImg) {
+            profileImg.style.transform = `translateY(${scrolled * 0.1}px)`;
+        }
+
+        ticking = false;
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+
+    // Only enable parallax on larger screens and if motion is not reduced
+    if (window.innerWidth > 768 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.addEventListener('scroll', requestTick);
+    }
 }

@@ -1521,22 +1521,28 @@ section {
   height: 300px;
 }
 
-/* TYPING ANIMATION */
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
+/* BLUR TEXT ANIMATION */
+@keyframes blur-in {
+  0% {
+    filter: blur(10px);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  50% {
+    filter: blur(5px);
+    opacity: 0.7;
+    transform: translateY(10px);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: var(--accent-color); }
-}
-
-.typing-animation {
-  overflow: hidden;
-  border-right: 3px solid var(--accent-color);
-  white-space: nowrap;
-  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+.blur-animation {
+  animation: blur-in 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-fill-mode: both;
 }
 
 /* ENHANCED SOCIAL LINKS ANIMATION */

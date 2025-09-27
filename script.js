@@ -652,20 +652,87 @@ function initStaggeredSkillAnimation() {
     skillItems.forEach(item => skillItemObserver.observe(item));
 }
 
-// Blur Animation for Hero Text
+// Enhanced Word-by-Word Animation - Inspired by React BlurText component
 function initTypingAnimation() {
     const heroSubtitle = document.querySelector('.hero-subtitle');
     if (!heroSubtitle) return;
 
-    // Hide the text initially
-    heroSubtitle.style.opacity = '0';
-    heroSubtitle.style.filter = 'blur(10px)';
-    heroSubtitle.style.transform = 'translateY(20px)';
+    // Configuration inspired by BlurText component
+    const config = {
+        delay: 150, // Reduced delay for smoother flow like the React component
+        direction: 'top', // Following their direction concept
+        threshold: 0.1,
+        stepDuration: 0.35,
+        onAnimationComplete: () => console.log('Hero subtitle animation completed!')
+    };
 
-    // Start blur animation after loading is complete
-    setTimeout(() => {
-        heroSubtitle.classList.add('blur-animation');
-    }, 2500); // Delayed until after loading animation
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Get the original text and split into words
+    const originalText = heroSubtitle.textContent.trim();
+    const words = originalText.split(' ');
+    
+    // Clear the original text and prepare container
+    heroSubtitle.innerHTML = '';
+    heroSubtitle.style.opacity = '1';
+    heroSubtitle.style.display = 'flex';
+    heroSubtitle.style.flexWrap = 'wrap';
+    
+    // Create spans for each word with improved structure
+    const wordElements = [];
+    words.forEach((word, index) => {
+        const wordSpan = document.createElement('span');
+        wordSpan.textContent = word;
+        wordSpan.classList.add('word-animation');
+        wordSpan.style.willChange = 'transform, filter, opacity';
+        
+        // Add space handling like in React component
+        heroSubtitle.appendChild(wordSpan);
+        if (index < words.length - 1) {
+            const space = document.createElement('span');
+            space.textContent = '\u00A0'; // Non-breaking space like in React component
+            space.style.display = 'inline-block';
+            heroSubtitle.appendChild(space);
+        }
+        
+        wordElements.push(wordSpan);
+    });
+
+    // Intersection Observer inspired animation trigger (simplified for hero section)
+    const triggerAnimation = () => {
+        if (prefersReducedMotion) {
+            // Respect reduced motion immediately
+            wordElements.forEach((wordElement) => {
+                wordElement.style.opacity = '1';
+                wordElement.style.filter = 'blur(0px)';
+                wordElement.style.transform = 'translateY(0) scale(1)';
+            });
+            config.onAnimationComplete();
+        } else {
+            // Enhanced staggered animation with completion tracking
+            let completedAnimations = 0;
+            
+            wordElements.forEach((wordElement, index) => {
+                setTimeout(() => {
+                    wordElement.style.animationDelay = '0s';
+                    wordElement.classList.add('animate-word');
+                    
+                    // Track animation completion
+                    wordElement.addEventListener('animationend', () => {
+                        completedAnimations++;
+                        if (completedAnimations === wordElements.length) {
+                            config.onAnimationComplete();
+                        }
+                    }, { once: true });
+                    
+                }, index * config.delay);
+            });
+        }
+    };
+
+    // Start animation after loading is complete (maintaining original timing)
+    setTimeout(triggerAnimation, 2500);
 }
 
 // Parallax Effects

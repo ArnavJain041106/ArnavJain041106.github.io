@@ -1521,7 +1521,43 @@ section {
   height: 300px;
 }
 
-/* BLUR TEXT ANIMATION */
+/* BLUR TEXT ANIMATION - Enhanced for word-by-word with bounce */
+@keyframes blur-in-word {
+  0% {
+    filter: blur(12px);
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+  }
+  50% {
+    filter: blur(6px);
+    opacity: 0.6;
+    transform: translateY(-8px) scale(1.05);
+  }
+  70% {
+    filter: blur(2px);
+    opacity: 0.9;
+    transform: translateY(4px) scale(0.98);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.word-animation {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(30px) scale(0.8);
+  animation-fill-mode: both;
+}
+
+.word-animation.animate-word {
+  animation: blur-in-word 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Legacy blur animation - kept for backward compatibility */
 @keyframes blur-in {
   0% {
     filter: blur(10px);

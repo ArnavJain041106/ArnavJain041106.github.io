@@ -652,20 +652,58 @@ function initStaggeredSkillAnimation() {
     skillItems.forEach(item => skillItemObserver.observe(item));
 }
 
-// Blur Animation for Hero Text
+// Enhanced Word-by-Word Blur Animation with Bounce for Hero Text
 function initTypingAnimation() {
     const heroSubtitle = document.querySelector('.hero-subtitle');
     if (!heroSubtitle) return;
 
-    // Hide the text initially
-    heroSubtitle.style.opacity = '0';
-    heroSubtitle.style.filter = 'blur(10px)';
-    heroSubtitle.style.transform = 'translateY(20px)';
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Start blur animation after loading is complete
-    setTimeout(() => {
-        heroSubtitle.classList.add('blur-animation');
-    }, 2500); // Delayed until after loading animation
+    // Get the original text and split into words
+    const originalText = heroSubtitle.textContent.trim();
+    const words = originalText.split(' ');
+    
+    // Clear the original text and hide the element
+    heroSubtitle.innerHTML = '';
+    heroSubtitle.style.opacity = '1'; // Keep container visible
+    
+    // Create spans for each word
+    words.forEach((word, index) => {
+        const wordSpan = document.createElement('span');
+        wordSpan.textContent = word;
+        wordSpan.classList.add('word-animation');
+        
+        // Add space after each word except the last one
+        heroSubtitle.appendChild(wordSpan);
+        if (index < words.length - 1) {
+            heroSubtitle.appendChild(document.createTextNode(' '));
+        }
+    });
+
+    // Start word-by-word animation after loading is complete
+    const wordElements = heroSubtitle.querySelectorAll('.word-animation');
+    
+    if (prefersReducedMotion) {
+        // For users who prefer reduced motion, show all words immediately
+        setTimeout(() => {
+            wordElements.forEach((wordElement) => {
+                wordElement.style.opacity = '1';
+                wordElement.style.filter = 'blur(0px)';
+                wordElement.style.transform = 'translateY(0) scale(1)';
+            });
+        }, 2500); // Same initial delay but no stagger
+    } else {
+        // Normal animation for users who don't mind motion
+        setTimeout(() => {
+            wordElements.forEach((wordElement, index) => {
+                setTimeout(() => {
+                    wordElement.style.animationDelay = '0s';
+                    wordElement.classList.add('animate-word');
+                }, index * 200); // Stagger each word by 200ms
+            });
+        }, 2500); // Initial delay until after loading animation
+    }
 }
 
 // Parallax Effects

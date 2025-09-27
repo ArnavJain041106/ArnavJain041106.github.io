@@ -652,31 +652,20 @@ function initStaggeredSkillAnimation() {
     skillItems.forEach(item => skillItemObserver.observe(item));
 }
 
-// Typing Animation for Hero Text
+// Blur Animation for Hero Text
 function initTypingAnimation() {
     const heroSubtitle = document.querySelector('.hero-subtitle');
     if (!heroSubtitle) return;
 
-    const text = heroSubtitle.textContent;
-    heroSubtitle.textContent = '';
-    heroSubtitle.classList.add('typing-animation');
+    // Hide the text initially
+    heroSubtitle.style.opacity = '0';
+    heroSubtitle.style.filter = 'blur(10px)';
+    heroSubtitle.style.transform = 'translateY(20px)';
 
-    let i = 0;
-    function typeWriter() {
-        if (i < text.length) {
-            heroSubtitle.textContent += text.charAt(i);
-            i++;
-            setTimeout(typeWriter, 100);
-        } else {
-            // Remove typing cursor after completion
-            setTimeout(() => {
-                heroSubtitle.style.borderRight = 'none';
-            }, 1000);
-        }
-    }
-
-    // Start typing animation after loading is complete
-    setTimeout(typeWriter, 2500); // Delayed until after loading animation
+    // Start blur animation after loading is complete
+    setTimeout(() => {
+        heroSubtitle.classList.add('blur-animation');
+    }, 2500); // Delayed until after loading animation
 }
 
 // Parallax Effects

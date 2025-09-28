@@ -18,17 +18,17 @@ const supabase = window.supabase.createClient(
 );
 </script>
 </head>
-<body>
+<body class="loading">
 
 <!-- 3D Background Canvas -->
 <canvas id="bg-canvas"></canvas>
 
 <!-- Loading Animation -->
 <div id="loading-overlay" class="loading-overlay">
-  <div class="loading-spinner">
-    <div class="spinner-ring"></div>
-    <div class="spinner-ring"></div>
-    <div class="spinner-ring"></div>
+  <div class="loading-content">
+    <div class="loading-text">
+      LOADING <span id="loading-progress">[00]</span>
+    </div>
   </div>
 </div>
 

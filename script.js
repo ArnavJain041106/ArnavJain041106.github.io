@@ -534,11 +534,24 @@ function initLoadingAnimation() {
     
     if (!loadingOverlay || !loadingProgress) return;
     
+    // Check if this is the first visit to the website
+    const hasVisitedBefore = sessionStorage.getItem('portfolio-visited');
+    
+    if (hasVisitedBefore) {
+        // Skip loading animation on subsequent visits
+        loadingOverlay.style.display = 'none';
+        document.body.classList.remove('loading');
+        return;
+    }
+    
+    // Mark as visited for subsequent page loads in this session
+    sessionStorage.setItem('portfolio-visited', 'true');
+    
     // Add loading class to body to prevent scrolling
     document.body.classList.add('loading');
     
     let progress = 0;
-    const duration = 3500; // 3.5 seconds
+    const duration = 1700; // 1.7 seconds (reduced from 3.5s)
     const interval = 50; // Update every 50ms
     const increment = 100 / (duration / interval);
     

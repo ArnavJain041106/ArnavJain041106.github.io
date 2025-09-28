@@ -260,9 +260,9 @@ section .glass-card:last-child {
 
 /* Footer card */
 .glass-card.footer-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 6px 20px var(--shadow-color);
+  background: #d3d3d3; /* Light gray background for embedded effect */
+  border: none; /* Remove glass border */
+  box-shadow: none; /* Remove glass shadow */
   padding: 25px;
   text-align: center;
   margin-bottom: 0;
@@ -270,9 +270,9 @@ section .glass-card:last-child {
 
 /* Enhanced footer card for light theme */
 [data-theme="light"] .glass-card.footer-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: #d3d3d3; /* Same light gray for consistency */
+  border: none; /* Remove glass border */
+  box-shadow: none; /* Remove glass shadow */
 }
 
 /* HERO SECTION */

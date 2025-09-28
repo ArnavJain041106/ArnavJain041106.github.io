@@ -502,16 +502,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Enhanced Animations and Interactive Features
 function initEnhancedAnimations() {
-    // Hide loading overlay
-    setTimeout(() => {
-        const loadingOverlay = document.getElementById('loading-overlay');
-        if (loadingOverlay) {
-            loadingOverlay.classList.add('hidden');
-            setTimeout(() => {
-                loadingOverlay.remove();
-            }, 500);
-        }
-    }, 1000);
+    // Initialize loading animation
+    initLoadingAnimation();
 
     // Back to top button
     initBackToTopButton();
@@ -533,6 +525,49 @@ function initEnhancedAnimations() {
     
     // Parallax effects
     initParallaxEffects();
+}
+
+// Loading Animation with Progress Counter
+function initLoadingAnimation() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingProgress = document.getElementById('loading-progress');
+    
+    if (!loadingOverlay || !loadingProgress) return;
+    
+    // Add loading class to body to prevent scrolling
+    document.body.classList.add('loading');
+    
+    let progress = 0;
+    const duration = 3500; // 3.5 seconds
+    const interval = 50; // Update every 50ms
+    const increment = 100 / (duration / interval);
+    
+    const progressTimer = setInterval(() => {
+        progress += increment;
+        
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(progressTimer);
+            
+            // Update final progress
+            loadingProgress.textContent = `[${progress.toString().padStart(2, '0')}]`;
+            
+            // Start slide-up animation after a brief pause
+            setTimeout(() => {
+                loadingOverlay.classList.add('slide-up');
+                document.body.classList.remove('loading');
+                
+                // Remove the overlay after animation completes
+                setTimeout(() => {
+                    loadingOverlay.remove();
+                }, 1000);
+            }, 200);
+        } else {
+            // Update progress display
+            const displayProgress = Math.floor(progress);
+            loadingProgress.textContent = `[${displayProgress.toString().padStart(2, '0')}]`;
+        }
+    }, interval);
 }
 
 // Back to Top Button

@@ -1797,3 +1797,41 @@ body.loading {
     padding-top: 170px !important;
   }
 }
+
+/* FALLBACK ANIMATIONS FOR NON-GSAP ENVIRONMENTS */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced GSAP-ready states */
+.glass-card:not(.merged-hero-card) {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hero-title span,
+.hero-subtitle,
+.hero-description,
+.hero-buttons .btn,
+.merged-hero-image {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Ensure animations work when GSAP loads */
+.gsap-loaded .glass-card:not(.merged-hero-card),
+.gsap-loaded .hero-title span,
+.gsap-loaded .hero-subtitle,
+.gsap-loaded .hero-description,
+.gsap-loaded .hero-buttons .btn,
+.gsap-loaded .merged-hero-image {
+  opacity: 1;
+  transform: translateY(0);
+}

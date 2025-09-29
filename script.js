@@ -177,14 +177,14 @@ if (contactForm) {
     });
 }
 
-// Fallback for non-WebGL browsers (used for every device now)
+// Enhanced fallback background with CSS animations
 function initFallbackBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
         canvas.style.display = 'none';
     }
 
-    // Create fallback background with theme support
+    // Create enhanced fallback background with theme support and animations
     let fallbackDiv = document.getElementById('fallback-background');
     if (!fallbackDiv) {
         fallbackDiv = document.createElement('div');
@@ -197,14 +197,98 @@ function initFallbackBackground() {
         fallbackDiv.style.zIndex = '-1';
         fallbackDiv.style.pointerEvents = 'none';
         fallbackDiv.style.transition = 'background 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Add animated floating particles as CSS elements
+        fallbackDiv.innerHTML = createCSSParticles();
+        
         document.body.appendChild(fallbackDiv);
     }
     
     updateFallbackBackground();
+    
+    // Add mouse tracking for CSS particle animation
+    setupCSSMouseTracking();
 }
 
-// Screen-to-world conversion (kept for completeness - not used)
+// Create CSS-based particles for fallback
+function createCSSParticles() {
+    const particleCount = isMobile ? 15 : 25;
+    let particlesHTML = '';
+    
+    for (let i = 0; i < particleCount; i++) {
+        const size = Math.random() * 4 + 2;
+        const duration = Math.random() * 20 + 15;
+        const delay = Math.random() * 5;
+        
+        particlesHTML += `
+            <div class="css-particle" style="
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+            "></div>
+        `;
+    }
+    
+    // Add floating geometric shapes
+    for (let i = 0; i < (isMobile ? 3 : 6); i++) {
+        const size = Math.random() * 60 + 40;
+        const duration = Math.random() * 30 + 20;
+        const delay = Math.random() * 10;
+        
+        particlesHTML += `
+            <div class="css-shape" style="
+                left: ${Math.random() * 80 + 10}%;
+                top: ${Math.random() * 80 + 10}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+            "></div>
+        `;
+    }
+    
+    return particlesHTML;
+}
+
+// CSS mouse tracking for fallback
+function setupCSSMouseTracking() {
+    let mouseGlowDiv = document.getElementById('css-mouse-glow');
+    
+    if (!mouseGlowDiv) {
+        mouseGlowDiv = document.createElement('div');
+        mouseGlowDiv.id = 'css-mouse-glow';
+        mouseGlowDiv.style.position = 'fixed';
+        mouseGlowDiv.style.width = '300px';
+        mouseGlowDiv.style.height = '300px';
+        mouseGlowDiv.style.borderRadius = '50%';
+        mouseGlowDiv.style.background = 'radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%)';
+        mouseGlowDiv.style.pointerEvents = 'none';
+        mouseGlowDiv.style.zIndex = '-1';
+        mouseGlowDiv.style.transform = 'translate(-50%, -50%)';
+        mouseGlowDiv.style.transition = 'all 0.1s ease';
+        document.body.appendChild(mouseGlowDiv);
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        mouseGlowDiv.style.left = e.clientX + 'px';
+        mouseGlowDiv.style.top = e.clientY + 'px';
+    });
+}
+
+// Screen-to-world conversion (enhanced with fallback for CSS animations)
 function screenToWorld(screenX, screenY) {
+    if (typeof THREE === 'undefined' || !camera) {
+        // Fallback for CSS animations
+        return {
+            x: (screenX / window.innerWidth - 0.5) * 100,
+            y: -(screenY / window.innerHeight - 0.5) * 100,
+            z: 0
+        };
+    }
+    
     const vector = new THREE.Vector3();
     vector.set(
         (screenX / window.innerWidth) * 2 - 1,
@@ -361,6 +445,13 @@ function createEnhancedParticleSystem() {
 function initThree() {
     try {
         detectDevice();
+        
+        // Check if THREE.js is available
+        if (typeof THREE === 'undefined') {
+            console.warn('THREE.js not available, using fallback background');
+            initFallbackBackground();
+            return;
+        }
         
         // Get canvas element
         const canvas = document.getElementById('bg-canvas');

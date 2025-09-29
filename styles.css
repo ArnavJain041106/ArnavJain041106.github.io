@@ -1835,3 +1835,86 @@ body.loading {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* CSS FALLBACK ANIMATIONS FOR WHEN WEBGL IS NOT AVAILABLE */
+.css-particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.6) 0%, rgba(255, 167, 38, 0.4) 50%, transparent 100%);
+  border-radius: 50%;
+  animation: cssParticleFloat infinite linear;
+  pointer-events: none;
+}
+
+.css-shape {
+  position: absolute;
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 20% 50% 30% 40%;
+  background: rgba(255, 107, 53, 0.05);
+  animation: cssShapeFloat infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes cssParticleFloat {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) scale(1.1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) translateX(-5px) scale(0.9);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-30px) translateX(-10px) scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes cssShapeFloat {
+  0% {
+    transform: rotate(0deg) translateY(0px) scale(1);
+    opacity: 0.1;
+  }
+  25% {
+    transform: rotate(90deg) translateY(-15px) scale(1.05);
+    opacity: 0.15;
+  }
+  50% {
+    transform: rotate(180deg) translateY(-25px) scale(0.95);
+    opacity: 0.08;
+  }
+  75% {
+    transform: rotate(270deg) translateY(-10px) scale(1.02);
+    opacity: 0.12;
+  }
+  100% {
+    transform: rotate(360deg) translateY(0px) scale(1);
+    opacity: 0.1;
+  }
+}
+
+/* Enhanced CSS animations for light theme */
+[data-theme="light"] .css-particle {
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.4) 0%, rgba(255, 167, 38, 0.2) 50%, transparent 100%);
+}
+
+[data-theme="light"] .css-shape {
+  border-color: rgba(255, 107, 53, 0.3);
+  background: rgba(255, 107, 53, 0.03);
+}
+
+/* Performance optimizations for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .css-particle,
+  .css-shape {
+    animation: none !important;
+    opacity: 0.3 !important;
+  }
+}

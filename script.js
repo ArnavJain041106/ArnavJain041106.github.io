@@ -177,14 +177,14 @@ if (contactForm) {
     });
 }
 
-// Fallback for non-WebGL browsers (used for every device now)
+// Enhanced fallback background with CSS animations
 function initFallbackBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
         canvas.style.display = 'none';
     }
 
-    // Create fallback background with theme support
+    // Create enhanced fallback background with theme support and animations
     let fallbackDiv = document.getElementById('fallback-background');
     if (!fallbackDiv) {
         fallbackDiv = document.createElement('div');
@@ -197,14 +197,98 @@ function initFallbackBackground() {
         fallbackDiv.style.zIndex = '-1';
         fallbackDiv.style.pointerEvents = 'none';
         fallbackDiv.style.transition = 'background 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Add animated floating particles as CSS elements
+        fallbackDiv.innerHTML = createCSSParticles();
+        
         document.body.appendChild(fallbackDiv);
     }
     
     updateFallbackBackground();
+    
+    // Add mouse tracking for CSS particle animation
+    setupCSSMouseTracking();
 }
 
-// Screen-to-world conversion (kept for completeness - not used)
+// Create CSS-based particles for fallback
+function createCSSParticles() {
+    const particleCount = isMobile ? 15 : 25;
+    let particlesHTML = '';
+    
+    for (let i = 0; i < particleCount; i++) {
+        const size = Math.random() * 4 + 2;
+        const duration = Math.random() * 20 + 15;
+        const delay = Math.random() * 5;
+        
+        particlesHTML += `
+            <div class="css-particle" style="
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+            "></div>
+        `;
+    }
+    
+    // Add floating geometric shapes
+    for (let i = 0; i < (isMobile ? 3 : 6); i++) {
+        const size = Math.random() * 60 + 40;
+        const duration = Math.random() * 30 + 20;
+        const delay = Math.random() * 10;
+        
+        particlesHTML += `
+            <div class="css-shape" style="
+                left: ${Math.random() * 80 + 10}%;
+                top: ${Math.random() * 80 + 10}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+            "></div>
+        `;
+    }
+    
+    return particlesHTML;
+}
+
+// CSS mouse tracking for fallback
+function setupCSSMouseTracking() {
+    let mouseGlowDiv = document.getElementById('css-mouse-glow');
+    
+    if (!mouseGlowDiv) {
+        mouseGlowDiv = document.createElement('div');
+        mouseGlowDiv.id = 'css-mouse-glow';
+        mouseGlowDiv.style.position = 'fixed';
+        mouseGlowDiv.style.width = '300px';
+        mouseGlowDiv.style.height = '300px';
+        mouseGlowDiv.style.borderRadius = '50%';
+        mouseGlowDiv.style.background = 'radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%)';
+        mouseGlowDiv.style.pointerEvents = 'none';
+        mouseGlowDiv.style.zIndex = '-1';
+        mouseGlowDiv.style.transform = 'translate(-50%, -50%)';
+        mouseGlowDiv.style.transition = 'all 0.1s ease';
+        document.body.appendChild(mouseGlowDiv);
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        mouseGlowDiv.style.left = e.clientX + 'px';
+        mouseGlowDiv.style.top = e.clientY + 'px';
+    });
+}
+
+// Screen-to-world conversion (enhanced with fallback for CSS animations)
 function screenToWorld(screenX, screenY) {
+    if (typeof THREE === 'undefined' || !camera) {
+        // Fallback for CSS animations
+        return {
+            x: (screenX / window.innerWidth - 0.5) * 100,
+            y: -(screenY / window.innerHeight - 0.5) * 100,
+            z: 0
+        };
+    }
+    
     const vector = new THREE.Vector3();
     vector.set(
         (screenX / window.innerWidth) * 2 - 1,
@@ -357,32 +441,228 @@ function createEnhancedParticleSystem() {
     }
 }
 
-// initThree - WebGL disabled, always use fallback background
+// Enhanced WebGL Background with Three.js
 function initThree() {
     try {
-        // Device detection (kept for UI tweaks)
         detectDevice();
-
-        // ALWAYS use the static fallback background – no WebGL at all
-        initFallbackBackground();
-
-        // Hide the canvas element if it exists
+        
+        // Check if THREE.js is available
+        if (typeof THREE === 'undefined') {
+            console.warn('THREE.js not available, using fallback background');
+            initFallbackBackground();
+            return;
+        }
+        
+        // Get canvas element
         const canvas = document.getElementById('bg-canvas');
-        if (canvas) canvas.style.display = 'none';
+        if (!canvas) {
+            console.warn('Canvas element not found, using fallback');
+            initFallbackBackground();
+            return;
+        }
 
-        // Reset all Three.js related globals so later code does not accidentally use them
-        scene = null;
-        camera = null;
-        renderer = null;
-        mouseGlow = null;
-        particleSystem = null;
-        floatingParticles = [];
+        // Check WebGL support
+        if (!deviceCapabilities.supportsWebGL) {
+            console.warn('WebGL not supported, using fallback');
+            initFallbackBackground();
+            return;
+        }
 
-        // No animation loop, no resize handler needed – everything is static now
+        // Initialize Three.js scene
+        scene = new THREE.Scene();
+        scene.background = null; // Transparent background
+        
+        // Setup camera
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 50;
+        
+        // Create WebGL renderer
+        renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            alpha: true,
+            antialias: !isMobile, // Disable antialiasing on mobile for performance
+            powerPreference: isMobile ? 'low-power' : 'high-performance'
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Initialize clock for animations
+        clock = new THREE.Clock();
+        
+        // Create animated background elements
+        createAnimatedBackground();
+        createFloatingParticles();
+        createMouseGlow();
+        
+        // Start animation loop
+        animate();
+        
+        // Show canvas
+        canvas.style.display = 'block';
+        canvas.style.opacity = '1';
+        
+        // Setup resize handler
+        window.addEventListener('resize', onWindowResize);
+        
+        // Setup mouse tracking
+        setupMouseTracking();
+        
+        console.log('WebGL background initialized successfully');
+        
     } catch (error) {
-        console.error('Unexpected error while disabling WebGL:', error);
+        console.error('Error initializing WebGL:', error);
         initFallbackBackground();
     }
+}
+
+// Create animated background with geometric shapes and gradients
+function createAnimatedBackground() {
+    // Create floating geometric shapes
+    const shapes = [];
+    const shapeCount = isMobile ? 8 : 15;
+    
+    for (let i = 0; i < shapeCount; i++) {
+        // Create different geometric shapes
+        let geometry;
+        const shapeType = Math.random();
+        
+        if (shapeType < 0.33) {
+            geometry = new THREE.RingGeometry(1, 2, 6);
+        } else if (shapeType < 0.66) {
+            geometry = new THREE.CircleGeometry(1.5, 8);
+        } else {
+            geometry = new THREE.PlaneGeometry(2, 2);
+        }
+        
+        const material = new THREE.MeshBasicMaterial({
+            color: new THREE.Color().setHSL(0.1 + Math.random() * 0.1, 0.5, 0.5),
+            transparent: true,
+            opacity: 0.1,
+            wireframe: Math.random() > 0.5
+        });
+        
+        const shape = new THREE.Mesh(geometry, material);
+        
+        // Random positioning
+        shape.position.x = (Math.random() - 0.5) * 100;
+        shape.position.y = (Math.random() - 0.5) * 100;
+        shape.position.z = (Math.random() - 0.5) * 50;
+        
+        // Random rotation
+        shape.rotation.x = Math.random() * Math.PI;
+        shape.rotation.y = Math.random() * Math.PI;
+        shape.rotation.z = Math.random() * Math.PI;
+        
+        // Store animation properties
+        shape.userData = {
+            rotationSpeed: (Math.random() - 0.5) * 0.01,
+            floatSpeed: (Math.random() - 0.5) * 0.02,
+            originalY: shape.position.y
+        };
+        
+        shapes.push(shape);
+        scene.add(shape);
+    }
+    
+    geometricShapes = shapes;
+}
+
+// Create floating particle system
+function createFloatingParticles() {
+    const particleCount = isMobile ? 50 : 100;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);
+    
+    const color = new THREE.Color();
+    
+    for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        
+        // Positions
+        positions[i3] = (Math.random() - 0.5) * 200;
+        positions[i3 + 1] = (Math.random() - 0.5) * 200;
+        positions[i3 + 2] = (Math.random() - 0.5) * 100;
+        
+        // Colors - orange/amber theme
+        color.setHSL(0.1 + Math.random() * 0.1, 0.8, 0.6);
+        colors[i3] = color.r;
+        colors[i3 + 1] = color.g;
+        colors[i3 + 2] = color.b;
+        
+        // Sizes
+        sizes[i] = Math.random() * 2 + 1;
+        
+        // Store particle data for animation
+        floatingParticles.push({
+            velocity: {
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            },
+            originalPos: {
+                x: positions[i3],
+                y: positions[i3 + 1],
+                z: positions[i3 + 2]
+            },
+            phase: Math.random() * Math.PI * 2,
+            amplitude: Math.random() * 0.5 + 0.2
+        });
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    
+    const material = new THREE.PointsMaterial({
+        size: 2,
+        sizeAttenuation: true,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+    });
+    
+    particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
+}
+
+// Create mouse-following glow effect
+function createMouseGlow() {
+    const geometry = new THREE.CircleGeometry(8, 32);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xff6b35,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending
+    });
+    
+    mouseGlow = new THREE.Mesh(geometry, material);
+    mouseGlow.position.z = 5;
+    scene.add(mouseGlow);
+}
+
+// Setup mouse tracking for interactive effects
+function setupMouseTracking() {
+    let mouseTargetX = 0;
+    let mouseTargetY = 0;
+    
+    document.addEventListener('mousemove', (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        
+        // Convert to normalized device coordinates
+        mouseTargetX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseTargetY = -(event.clientY / window.innerHeight) * 2 + 1;
+        
+        // Update mouse glow position with smooth interpolation
+        if (mouseGlow) {
+            const targetPos = screenToWorld(mouseX, mouseY);
+            mouseGlow.userData.targetX = targetPos.x;
+            mouseGlow.userData.targetY = targetPos.y;
+        }
+    });
 }
 
 // Window resize handler (safe - exits early if no camera/renderer)
@@ -394,7 +674,7 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Animation loop (will simply not run because renderer is null)
+// Enhanced animation loop for WebGL background
 function animate() {
     requestAnimationFrame(animate);
 
@@ -402,14 +682,37 @@ function animate() {
 
     const elapsedTime = clock.getElapsedTime();
 
-    // Mouse glow update (only when it exists)
-    if (mouseGlow) {
-        const targetPos = screenToWorld(mouseX, mouseY);
-        mouseGlow.position.x += (targetPos.x - mouseGlow.position.x) * 0.1;
-        mouseGlow.position.y += (targetPos.y - mouseGlow.position.y) * 0.1;
+    // Animate geometric shapes
+    if (geometricShapes && geometricShapes.length > 0) {
+        geometricShapes.forEach(shape => {
+            if (shape.userData) {
+                // Rotation animation
+                shape.rotation.x += shape.userData.rotationSpeed;
+                shape.rotation.y += shape.userData.rotationSpeed * 0.7;
+                shape.rotation.z += shape.userData.rotationSpeed * 0.5;
+                
+                // Floating animation
+                shape.position.y = shape.userData.originalY + Math.sin(elapsedTime * 0.5 + shape.position.x * 0.01) * 5;
+                
+                // Subtle pulsing opacity
+                shape.material.opacity = 0.05 + Math.sin(elapsedTime * 0.3 + shape.position.x * 0.02) * 0.05;
+            }
+        });
     }
 
-    // Particle system update
+    // Mouse glow smooth following
+    if (mouseGlow && mouseGlow.userData) {
+        if (mouseGlow.userData.targetX !== undefined) {
+            mouseGlow.position.x += (mouseGlow.userData.targetX - mouseGlow.position.x) * 0.1;
+            mouseGlow.position.y += (mouseGlow.userData.targetY - mouseGlow.position.y) * 0.1;
+        }
+        
+        // Subtle pulsing effect
+        const pulseScale = 1 + Math.sin(elapsedTime * 2) * 0.1;
+        mouseGlow.scale.set(pulseScale, pulseScale, 1);
+    }
+
+    // Enhanced particle system animation
     if (particleSystem && floatingParticles.length > 0) {
         const positions = particleSystem.geometry.attributes.position.array;
 
@@ -417,25 +720,37 @@ function animate() {
             const particle = floatingParticles[i];
             const i3 = i * 3;
 
+            // Update base position
             particle.originalPos.x += particle.velocity.x;
             particle.originalPos.y += particle.velocity.y;
             particle.originalPos.z += particle.velocity.z;
 
+            // Add wave motion for organic movement
             const wave = Math.sin(elapsedTime * 0.5 + particle.phase) * particle.amplitude;
+            const waveY = Math.cos(elapsedTime * 0.3 + particle.phase) * particle.amplitude * 0.5;
 
-            positions[i3] = particle.originalPos.x + wave * 0.1;
-            positions[i3 + 1] = particle.originalPos.y + wave * 0.2;
-            positions[i3 + 2] = particle.originalPos.z + wave * 0.1;
+            positions[i3] = particle.originalPos.x + wave * 2;
+            positions[i3 + 1] = particle.originalPos.y + waveY * 3;
+            positions[i3 + 2] = particle.originalPos.z + wave * 1;
 
-            if (positions[i3] > 150) particle.originalPos.x = -150;
-            if (positions[i3] < -150) particle.originalPos.x = 150;
+            // Boundary wrapping for continuous animation
+            if (positions[i3] > 100) particle.originalPos.x = -100;
+            if (positions[i3] < -100) particle.originalPos.x = 100;
             if (positions[i3 + 1] > 100) particle.originalPos.y = -100;
             if (positions[i3 + 1] < -100) particle.originalPos.y = 100;
+            if (positions[i3 + 2] > 50) particle.originalPos.z = -50;
+            if (positions[i3 + 2] < -50) particle.originalPos.z = 50;
         }
 
         particleSystem.geometry.attributes.position.needsUpdate = true;
     }
 
+    // Gentle camera movement for depth
+    camera.position.x = Math.sin(elapsedTime * 0.1) * 2;
+    camera.position.y = Math.cos(elapsedTime * 0.15) * 1;
+    camera.lookAt(0, 0, 0);
+
+    // Render the scene
     renderer.render(scene, camera);
 }
 
@@ -447,52 +762,208 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialise background (WebGL disabled)
     initThree();
 
-    // GSAP Animations (if GSAP is loaded) - OPTIMIZED VERSION
+    // Enhanced GSAP Animations with ScrollTrigger
     if (typeof gsap !== 'undefined' && gsap.registerPlugin) {
         gsap.registerPlugin(ScrollTrigger);
+        
+        // Add class to indicate GSAP is loaded
+        document.body.classList.add('gsap-loaded');
 
-        // Hero section animation (keep this - it's good)
-        gsap.from('.merged-hero-card', {
-            duration: 1,
+        // Enhanced hero section entrance animation
+        const heroTl = gsap.timeline();
+        
+        // Animate hero card with more sophistication
+        heroTl.from('.merged-hero-card', {
+            duration: 1.2,
             y: 100,
             opacity: 0,
+            scale: 0.95,
+            ease: 'power3.out'
+        })
+        .from('.hero-title span', {
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: 'power2.out'
+        }, '-=0.8')
+        .from('.hero-subtitle', {
+            duration: 0.6,
+            y: 30,
+            opacity: 0,
+            ease: 'power2.out'
+        }, '-=0.4')
+        .from('.hero-description', {
+            duration: 0.6,
+            y: 30,
+            opacity: 0,
+            ease: 'power2.out'
+        }, '-=0.3')
+        .from('.hero-buttons .btn', {
+            duration: 0.5,
+            y: 20,
+            opacity: 0,
+            stagger: 0.1,
+            ease: 'back.out(1.7)'
+        }, '-=0.2')
+        .from('.merged-hero-image', {
+            duration: 1,
+            scale: 0.8,
+            opacity: 0,
+            rotation: 5,
+            ease: 'power3.out'
+        }, '-=1');
+
+        // Section animations with ScrollTrigger
+        gsap.utils.toArray('.glass-card:not(.merged-hero-card)').forEach((card, index) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none reverse'
+                },
+                duration: 0.8,
+                y: 60,
+                opacity: 0,
+                scale: 0.95,
+                ease: 'power3.out',
+                delay: index * 0.1
+            });
+        });
+
+        // Skill items staggered animation
+        gsap.from('.skill-item', {
+            scrollTrigger: {
+                trigger: '.skills',
+                start: 'top 70%',
+                toggleActions: 'play none none reverse'
+            },
+            duration: 0.6,
+            y: 40,
+            opacity: 0,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
+
+        // Stats counter animation with enhanced effects
+        gsap.from('.stat-item', {
+            scrollTrigger: {
+                trigger: '.stats',
+                start: 'top 70%',
+                toggleActions: 'play none none reverse'
+            },
+            duration: 0.8,
+            scale: 0.8,
+            opacity: 0,
+            stagger: 0.2,
+            ease: 'back.out(1.7)'
+        });
+
+        // What I do cards animation
+        gsap.from('.service-item', {
+            scrollTrigger: {
+                trigger: '.services',
+                start: 'top 70%',
+                toggleActions: 'play none none reverse'
+            },
+            duration: 0.7,
+            y: 50,
+            opacity: 0,
+            stagger: 0.15,
             ease: 'power3.out'
         });
 
-        // REMOVED: Heavy ScrollTrigger animations replaced with efficient Intersection Observer below
-    }
+        // Enhanced hover animations for buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, {
+                    duration: 0.3,
+                    scale: 1.05,
+                    y: -2,
+                    ease: 'power2.out'
+                });
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    duration: 0.3,
+                    scale: 1,
+                    y: 0,
+                    ease: 'power2.out'
+                });
+            });
+        });
 
-    // OPTIMIZED: Efficient scroll animations with Intersection Observer
-    const animateOnScrollObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.transform = 'translateY(0)';
-                entry.target.style.opacity = '1';
+        // Enhanced hover animations for cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, {
+                    duration: 0.4,
+                    y: -8,
+                    scale: 1.02,
+                    ease: 'power2.out'
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    duration: 0.4,
+                    y: 0,
+                    scale: 1,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        // Scroll-based text animations
+        gsap.utils.toArray('h2, h3').forEach(heading => {
+            gsap.from(heading, {
+                scrollTrigger: {
+                    trigger: heading,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                ease: 'power2.out'
+            });
+        });
+        
+        // Page load complete animation
+        gsap.to('.loading-overlay', {
+            duration: 1,
+            y: '-100%',
+            ease: 'power3.inOut',
+            delay: 1,
+            onComplete: () => {
+                document.querySelector('.loading-overlay').style.display = 'none';
+                document.body.classList.remove('loading');
             }
         });
-    }, { 
-        threshold: 0.1, 
-        rootMargin: '50px' 
-    });
+    }
 
-    // Apply to all glass cards except hero card
-    document.querySelectorAll('.glass-card:not(.merged-hero-card)').forEach(card => {
-        // Set initial state
-        card.style.transform = 'translateY(17px)';
-        card.style.opacity = '0';
-        card.style.transition = 'transform 0.6s ease, opacity 0.6s ease';
-        
-        // Observe for intersection
-        animateOnScrollObserver.observe(card);
-    });
+    // Fallback for non-GSAP browsers or if GSAP fails
+    if (typeof gsap === 'undefined') {
+        // Simple CSS-based animations as fallback
+        document.querySelectorAll('.glass-card:not(.merged-hero-card)').forEach((card, index) => {
+            card.style.animation = `fadeInUp 0.8s ease forwards ${index * 0.1}s`;
+        });
+    }
 
     // Respect user's motion preferences
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // Disable animations for users who prefer reduced motion
-        document.querySelectorAll('.glass-card').forEach(card => {
-            card.style.transform = 'none';
-            card.style.opacity = '1';
-            card.style.transition = 'none';
+        // Disable all animations for users who prefer reduced motion
+        if (typeof gsap !== 'undefined') {
+            gsap.globalTimeline.clear();
+            ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        }
+        document.querySelectorAll('.glass-card, .btn').forEach(element => {
+            element.style.transform = 'none';
+            element.style.opacity = '1';
+            element.style.transition = 'none';
+            element.style.animation = 'none';
         });
     }
 

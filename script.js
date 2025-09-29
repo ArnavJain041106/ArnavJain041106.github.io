@@ -177,7 +177,7 @@ if (contactForm) {
     });
 }
 
-// Fallback for non-WebGL browsers (used for every device now)
+// Fallback for non-WebGL browsers with animated particles
 function initFallbackBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
@@ -199,8 +199,85 @@ function initFallbackBackground() {
         fallbackDiv.style.transition = 'background 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
         document.body.appendChild(fallbackDiv);
     }
+
+    // Create animated particles as fallback
+    createCSSParticles(fallbackDiv);
+    
+    // Add mouse glow effect for desktop
+    if (!deviceCapabilities.isMobile) {
+        createCSSMouseGlow(fallbackDiv);
+    }
     
     updateFallbackBackground();
+}
+
+// Create CSS-based animated particles
+function createCSSParticles(container) {
+    // Only add particles if they don't already exist
+    if (container.querySelector('.css-particle')) return;
+
+    const particleCount = deviceCapabilities.isMobile ? 15 : 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'css-particle';
+        
+        // Random starting position
+        const startX = Math.random() * 100;
+        const startY = Math.random() * 100;
+        const size = Math.random() * 4 + 2;
+        const duration = Math.random() * 20 + 20; // 20-40 seconds
+        const delay = Math.random() * 20; // Random delay up to 20s
+        
+        particle.style.cssText = `
+            position: absolute;
+            left: ${startX}%;
+            top: ${startY}%;
+            width: ${size}px;
+            height: ${size}px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.8) 0%, rgba(255, 140, 0, 0.2) 50%, transparent 100%);
+            border-radius: 50%;
+            animation: cssParticleFloat ${duration}s infinite linear ${delay}s;
+            opacity: 0.6;
+        `;
+        
+        container.appendChild(particle);
+    }
+}
+
+// Create CSS mouse glow effect
+function createCSSMouseGlow(container) {
+    // Only add glow if it doesn't already exist
+    if (container.querySelector('.css-mouse-glow')) return;
+
+    const glow = document.createElement('div');
+    glow.className = 'css-mouse-glow';
+    glow.style.cssText = `
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(255, 140, 0, 0.3) 0%, rgba(255, 140, 0, 0.1) 30%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease;
+        opacity: 0;
+        z-index: 1;
+    `;
+    
+    container.appendChild(glow);
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+        glow.style.opacity = '1';
+    });
+    
+    // Hide glow when mouse leaves window
+    document.addEventListener('mouseleave', () => {
+        glow.style.opacity = '0';
+    });
 }
 
 // Screen-to-world conversion (kept for completeness - not used)
@@ -357,30 +434,81 @@ function createEnhancedParticleSystem() {
     }
 }
 
-// initThree - WebGL disabled, always use fallback background
+// initThree - WebGL background animation with fallback
 function initThree() {
     try {
-        // Device detection (kept for UI tweaks)
+        // Device detection for performance optimization
         detectDevice();
 
-        // ALWAYS use the static fallback background – no WebGL at all
+        // Try to initialize WebGL if supported and not on low-end mobile
+        if (deviceCapabilities.supportsWebGL && !deviceCapabilities.isLowEnd) {
+            try {
+                // Initialize Three.js scene
+                scene = new THREE.Scene();
+                
+                // Setup camera
+                camera = new THREE.PerspectiveCamera(
+                    75, 
+                    window.innerWidth / window.innerHeight, 
+                    0.1, 
+                    1000
+                );
+                camera.position.z = 100;
+
+                // Setup renderer
+                const canvas = document.getElementById('bg-canvas');
+                renderer = new THREE.WebGLRenderer({ 
+                    canvas: canvas,
+                    alpha: true,
+                    antialias: !deviceCapabilities.isMobile,
+                    powerPreference: deviceCapabilities.isMobile ? "low-power" : "high-performance"
+                });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, deviceCapabilities.isMobile ? 1.5 : 2));
+                renderer.setClearColor(0x000000, 0);
+
+                // Initialize clock for animations
+                clock = new THREE.Clock();
+
+                // Show canvas
+                canvas.style.display = 'block';
+
+                // Create enhanced particle system
+                createEnhancedParticleSystem();
+
+                // Create mouse glow effect (desktop only)
+                if (!deviceCapabilities.isMobile) {
+                    mouseGlow = createEnhancedMouseGlow();
+                    if (mouseGlow) {
+                        scene.add(mouseGlow);
+                    }
+                }
+
+                // Setup mouse movement tracking
+                document.addEventListener('mousemove', (event) => {
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
+                });
+
+                // Setup resize handler
+                window.addEventListener('resize', onWindowResize);
+
+                // Start animation loop
+                animate();
+
+                console.log('WebGL background initialized successfully');
+                return;
+                
+            } catch (webglError) {
+                console.warn('WebGL initialization failed, falling back to static background:', webglError);
+            }
+        }
+
+        // Fallback to static background
         initFallbackBackground();
 
-        // Hide the canvas element if it exists
-        const canvas = document.getElementById('bg-canvas');
-        if (canvas) canvas.style.display = 'none';
-
-        // Reset all Three.js related globals so later code does not accidentally use them
-        scene = null;
-        camera = null;
-        renderer = null;
-        mouseGlow = null;
-        particleSystem = null;
-        floatingParticles = [];
-
-        // No animation loop, no resize handler needed – everything is static now
     } catch (error) {
-        console.error('Unexpected error while disabling WebGL:', error);
+        console.error('Error in initThree:', error);
         initFallbackBackground();
     }
 }
@@ -394,7 +522,7 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Animation loop (will simply not run because renderer is null)
+// Animation loop - handles particle movement and mouse glow
 function animate() {
     requestAnimationFrame(animate);
 
@@ -444,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme toggle FIRST
     initThemeToggle();
     
-    // Initialise background (WebGL disabled)
+    // Initialize WebGL background animation
     initThree();
 
     // GSAP Animations (if GSAP is loaded) - OPTIMIZED VERSION

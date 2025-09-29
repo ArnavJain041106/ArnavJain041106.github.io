@@ -62,11 +62,48 @@ body {
   transition: var(--theme-transition);
 }
 
-/* Canvas that holds the (now-inactive) Three.js background */
+/* Canvas that holds the Three.js background */
 #bg-canvas {
   position: fixed;
   inset: 0;
   z-index: -1;
+}
+
+/* CSS Particle Animation Fallback */
+.css-particle {
+  will-change: transform, opacity;
+}
+
+@keyframes cssParticleFloat {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* CSS Mouse Glow Effect */
+.css-mouse-glow {
+  will-change: transform, opacity;
+}
+
+/* Enhanced particle animation for light theme */
+[data-theme="light"] .css-particle {
+  background: radial-gradient(circle, rgba(230, 81, 0, 0.6) 0%, rgba(230, 81, 0, 0.15) 50%, transparent 100%) !important;
+}
+
+/* Enhanced mouse glow for light theme */
+[data-theme="light"] .css-mouse-glow {
+  background: radial-gradient(circle, rgba(230, 81, 0, 0.2) 0%, rgba(230, 81, 0, 0.05) 30%, transparent 70%) !important;
 }
 
 /* Helper container */

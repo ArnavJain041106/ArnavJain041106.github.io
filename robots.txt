@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://arnavjain041106.github.io/sitemap.xml
+
+# Disallow crawling of certain files (if needed)
+Disallow: /favicon.png
+Disallow: /favicon.svg
+Disallow: /*.js
+Disallow: /*.css
+
+# Allow important pages
+Allow: /index.html
+Allow: /projects.html
+Allow: /seo-analysis.html

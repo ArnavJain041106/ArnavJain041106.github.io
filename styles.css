@@ -203,11 +203,18 @@ body::after {
   z-index: 1000;
   box-shadow: 0 8px 25px var(--shadow-color);
   will-change: transform;
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { box-shadow: 0 8px 25px var(--shadow-color); }
+  50% { box-shadow: 0 8px 25px var(--shadow-color), 0 0 20px rgba(255, 107, 53, 0.3); }
 }
 
 .theme-toggle:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 12px 35px var(--shadow-color);
+  animation: none;
 }
 
 .theme-toggle:active {
@@ -804,8 +811,32 @@ section:nth-child(4) { animation-delay: 0.3s; }
   background: var(--glass-bg);
   border-radius: 15px;
   border: 1px solid var(--glass-border);
-  transition: var(--theme-transition);
-  margin-bottom: 0; /* Remove individual margin since we use gap */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-category::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.skill-category:hover::before {
+  transform: scaleY(1);
+}
+
+.skill-category:hover {
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px var(--shadow-color);
+  border-color: rgba(255, 107, 53, 0.3);
 }
 
 .category-icon {
@@ -1326,27 +1357,48 @@ section:nth-child(4) { animation-delay: 0.3s; }
 
 /* ENHANCED PROJECT ANIMATIONS */
 .project-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow;
+  position: relative;
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.project-card:hover::after {
+  opacity: 1;
 }
 
 .project-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 60px var(--shadow-color);
+  transform: translateY(-15px) scale(1.02);
+  box-shadow: 0 25px 60px var(--shadow-color), 0 0 30px rgba(255, 107, 53, 0.2);
+  border-color: rgba(255, 107, 53, 0.4);
 }
 
 [data-theme="light"] .project-card:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 20px rgba(255, 107, 53, 0.1);
 }
 
 .project-card:hover .project-image-img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(1.1);
 }
 
 .project-card:hover .project-placeholder {
-  background: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
-  transform: scale(1.05);
+  transform: scale(1.08) rotate(5deg);
 }
 
 /* CONTACT SECTION */
@@ -1376,7 +1428,29 @@ section:nth-child(4) { animation-delay: 0.3s; }
   background: var(--glass-bg);
   border-radius: 15px;
   border: 1px solid var(--glass-border);
-  transition: var(--theme-transition);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.contact-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(255, 140, 0, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.contact-item:hover::before {
+  opacity: 1;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 8px 25px var(--shadow-color);
+  border-color: rgba(255, 107, 53, 0.3);
 }
 
 .contact-icon {
